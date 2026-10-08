@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pédagogie et pratiques d’enseignement - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const ressources = [
+  ['▤', 'Apprentissage par projet : guide pratique', 'Guide complet pour concevoir et mettre en œuvre des projets pédagogiques motivants.', ['Stratégies pédagogiques'], 'Guide'],
+  ['♙', 'Activité : Débat en classe', 'Fiche d’activité pour organiser un débat structuré avec vos élèves.', ['Activités pratiques'], 'Fiche'],
+  ['✓', 'Évaluation formative : 10 stratégies', 'Des stratégies pour évaluer sans noter et favoriser les apprentissages.', ['Évaluation'], 'Article'],
+  ['◷', 'Gestion des comportements difficiles', 'Stratégies concrètes pour prévenir et gérer les comportements difficiles en classe.', ['Gestion de classe'], 'Guide'],
+  ['⌘', 'Intégrer les TIC dans l’enseignement', 'Exemples et outils pour intégrer efficacement les technologies numériques.', ['Numérique éducatif'], 'Vidéo']
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Pédagogie et pratiques d’enseignement</h1>
+    <p>Découvrez des méthodes, stratégies et ressources pour enrichir vos pratiques pédagogiques et favoriser l’apprentissage actif.</p>
+  </section>
+  <div class="dash-stats">
+    ${statCard('▥', '128', 'Stratégies pédagogiques')}
+    ${statCard('♙', '86', 'Activités pratiques', 'green')}
+    ${statCard('✦', '64', 'Guides et méthodes', 'purple')}
+    ${statCard('▷', '42', 'Vidéos pédagogiques', 'orange')}
+    ${statCard('★', '24', 'Modèles et gabarits', 'pink')}
+  </div>
+  <div class="tabs-modern"><button class="actif">Vue d’ensemble</button><button>Stratégies</button><button>Activités pratiques</button><button>Évaluation</button><button>Numérique éducatif</button><button>Inclusion</button></div>
+  <div class="filters-modern">
+    <select><option>Niveau : Tous</option></select>
+    <select><option>Discipline : Toutes</option></select>
+    <select><option>Type de ressource : Tous</option></select>
+    <input placeholder="Rechercher une ressource...">
+    <button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>Catégories de ressources</h2><a href="/ressources">Voir tout</a></div>
+  <div class="category-grid">
+    <a class="category-tile" href="#"><span>▤</span><b>Stratégies pédagogiques</b><small>Méthodes et approches efficaces.</small></a>
+    <a class="category-tile" href="#"><span>✚</span><b>Activités pratiques</b><small>Activités prêtes à l’emploi.</small></a>
+    <a class="category-tile" href="#"><span>✓</span><b>Évaluation des apprentissages</b><small>Outils et techniques variés.</small></a>
+    <a class="category-tile" href="#"><span>⌘</span><b>Numérique éducatif</b><small>Intégrer le numérique en classe.</small></a>
+  </div>
+  <div class="section-head" style="margin-top:22px"><h2>Ressources récentes</h2><a href="/catalogue">Voir tout</a></div>
+  <div class="resource-list">${ressources.map(r => resourceRow(r[0], r[1], r[2], r[3], r[4])).join('')}</div>
+`;
+
+const droite = `
+  <div class="side-card orange-callout">
+    <h3>À la une</h3>
+    <p><b>Classe inversée : mode d’emploi</b></p>
+    <p style="color:var(--texte-2);font-size:13px">Découvrez comment mettre en place la classe inversée pour améliorer l’engagement des élèves.</p>
+    <a href="#" class="btn btn-contour btn-petit" style="margin-top:12px">Consulter</a>
+  </div>
+  <div class="side-card soft-callout">
+    <h3>Méthode recommandée</h3>
+    <p><b>Pédagogie différenciée</b></p>
+    <p>Adapter votre enseignement aux besoins et aux rythmes de chaque élève.</p>
+  </div>
+  <div class="side-card">
+    <h3>Ressources les plus consultées <a href="/catalogue">Voir tout</a></h3>
+    ${featuredList([
+      { titre: 'Taxonomie de Bloom revisitée', meta: '3.2K vues' },
+      { titre: 'Apprentissage coopératif', meta: '2.7K vues' },
+      { titre: 'Évaluation par compétences', meta: '2.1K vues' },
+      { titre: 'Scénario pédagogique : exemple', meta: '1.8K vues' }
+    ])}
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('pedagogie', contenu, droite, {
+  search: 'Rechercher une ressource, une activité, une stratégie...',
+  action: '<a class="btn btn-bleu btn-petit" href="/dashboard">+ Nouvelle activité</a>'
+});
+</script>
+</body>
+</html>

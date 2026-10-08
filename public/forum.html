@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forum des enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const cats = [
+  ['▥', 'Pédagogie et pratiques d’enseignement', 'Partagez vos méthodes, stratégies et expériences pédagogiques.', '89 sujets · 412 messages', 'Comment motiver les élèves en classe ?'],
+  ['⚗', 'Sciences et disciplines', 'Discutez des contenus, ressources et activités par discipline.', '76 sujets · 328 messages', 'Ressources pour la chimie secondaire'],
+  ['⌘', 'TIC et outils numériques', 'Échangez sur l’intégration des TIC et les outils numériques.', '64 sujets · 256 messages', 'Applications utiles pour l’enseignement'],
+  ['♙', 'Gestion de classe et école', 'Partagez vos conseils sur la gestion de classe et la vie scolaire.', '48 sujets · 201 messages', 'Gérer une classe nombreuse'],
+  ['★', 'Développement professionnel', 'Formations, conseils et développement des compétences.', '47 sujets · 189 messages', 'Formations en ligne recommandées']
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Forum des enseignants</h1>
+    <p>Échangez des idées, posez vos questions et partagez vos expériences avec la communauté éducative OASIS.</p>
+  </section>
+  <div class="filters-modern" style="grid-template-columns:1fr auto">
+    <input placeholder="Rechercher un sujet, une discussion...">
+    <button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="dash-stats">
+    ${statCard('◌', '324', 'Sujets')}
+    ${statCard('✉', '1.2K', 'Messages', 'green')}
+    ${statCard('♙', '1.8K', 'Membres', 'orange')}
+    ${statCard('⌕', '2.4K', 'Vues', 'purple')}
+    ${statCard('✓', '256', 'Sujets résolus', 'pink')}
+  </div>
+  <div class="tabs-modern"><button class="actif">Catégories</button><button>Récents</button><button>Non lus <span class="pill">18</span></button><button>Mes abonnements</button><button>Mes sujets</button></div>
+  <div class="forum-grid">
+    <section class="panel-clean" style="padding:0">
+      <h3 style="padding:18px 18px 0">Catégories du forum</h3>
+      ${cats.map(c => `<article class="forum-category">
+        <span class="row-icon">${c[0]}</span>
+        <div><b>${c[1]}</b><p>${c[2]}</p><small>${c[3]}</small></div>
+        <small><b>Dernier sujet</b><br><a style="color:var(--bleu)" href="#">${c[4]}</a><br>Il y a 2 heures</small>
+        <strong>›</strong>
+      </article>`).join('')}
+      <div style="padding:18px;text-align:center"><a class="btn btn-contour" href="#">Voir toutes les catégories</a></div>
+    </section>
+    <aside class="panel-clean">
+      <h3>Sujets récents</h3>
+      ${['Activités pour évaluer la compréhension','Partage de ressources en mathématiques','Utilisation du laboratoire virtuel','Motiver les élèves en période d’examens','Projets interdisciplinaires : vos idées'].map((t,i)=>`<div class="recent-topic"><span class="mini-avatar">${['MD','PG','JB','SB','ML'][i]}</span><div><b>${t}</b><br><small>Il y a ${i+1} heure${i?'s':''}</small></div><i>${[3,5,2,4,7][i]}</i></div>`).join('')}
+    </aside>
+  </div>
+`;
+
+const droite = `
+  <div class="side-card">
+    <h3>Actions rapides</h3>
+    ${quickAction('+', 'Nouveau sujet', 'Démarrer une discussion', '#')}
+    ${quickAction('⌕', 'Rechercher dans le forum', 'Trouver des sujets ou messages', '#')}
+    ${quickAction('★', 'Mes abonnements', 'Voir les sujets suivis', '#')}
+    ${quickAction('✎', 'Mes brouillons', 'Continuer la rédaction', '#')}
+  </div>
+  <div class="side-card"><h3>Sujets populaires <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:'Meilleures stratégies pour l’évaluation formative',meta:'1.2K vues'},{titre:'Gérer la discipline en classe',meta:'987 vues'},{titre:'Intégrer les TIC efficacement',meta:'842 vues'},{titre:'Idées d’activités collaboratives',meta:'756 vues'}])}
+  </div>
+  <div class="side-card green-callout"><h3>Règles du forum</h3><p>Soyez respectueux, restez dans le sujet, évitez les doublons et partagez des ressources de qualité.</p></div>
+`;
+
+document.getElementById('app').innerHTML = appShell('forum', contenu, droite, {
+  search: 'Rechercher dans le forum...',
+  action: '<a class="btn btn-bleu btn-petit" href="#">+ Nouveau sujet</a>'
+});
+</script>
+</body>
+</html>

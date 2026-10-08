@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catégories — OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur">
+
+  <div class="bandeau">
+    <div class="bandeau-titre">
+      <h1>Catégories</h1>
+      <p>Explorez toutes nos catégories de contenus éducatifs.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="disposition">
+    <aside>
+      <div class="panneau">
+        <h3>Parcourir</h3>
+        <div class="liste-cat">
+          <a class="actif" href="/categories">▦ Toutes les catégories</a>
+          <a href="/catalogue?type=support">📘 Manuels scolaires</a>
+          <a href="/catalogue?type=document">📚 Livres</a>
+          <a href="/quiz">🎓 Formations</a>
+          <a href="/ressources">📄 Ressources pédagogiques</a>
+        </div>
+      </div>
+      <div class="panneau" style="background:var(--vert-clair);border-color:#BEE7CC">
+        <h3>Du contenu pour tous !</h3>
+        <p style="font-size:13px;color:var(--texte-2);margin-bottom:12px">Trouvez des ressources adaptées à chaque niveau et à chaque besoin.</p>
+        <a href="/ressources" class="btn btn-vert btn-petit">Découvrir maintenant →</a>
+      </div>
+    </aside>
+
+    <section>
+      <div class="grille grille-large" id="grille"><div class="chargement">Chargement des catégories…</div></div>
+    </section>
+  </div>
+
+  <div class="cta">
+    <div style="font-size:40px">📖</div>
+    <div><h2>Explorez, apprenez, progressez !</h2>
+    <p>Accédez à des milliers de contenus de qualité pour réussir.</p></div>
+    <a href="/catalogue?type=support" class="btn btn-vert">Voir tous les manuels →</a>
+  </div>
+
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('Catégories');
+afficherPied();
+
+(async () => {
+  const [cats, s] = await Promise.all([API.get('/api/categories'), API.get('/api/stats')]);
+  document.getElementById('stats').innerHTML = [
+    ['🗂️', 'ic-bleu', cats.length, 'Catégories principales'],
+    ['📗', 'ic-vert', s.ressources + '+', 'Manuels & Livres'],
+    ['🎓', 'ic-violet', s.quiz, 'Formations'],
+    ['📄', 'ic-orange', fmtNombre(s.telechargements) + '+', 'Téléchargements'],
+    ['👥', 'ic-rose', (s.apprenants + s.enseignants) + '+', 'Apprenants']
+  ].map(([e, c, v, l]) => `<div class="stat"><div class="ic ${c}">${e}</div><div><b>${v}</b><small>${l}</small></div></div>`).join('');
+
+  document.getElementById('grille').innerHTML = cats.map(c => `
+    <a class="carte carte-cat" href="/ressources?categorie=${c.id}">
+      <span class="emoji" aria-hidden="true">${c.icone}</span>
+      <b>${c.nom}</b>
+      <p>${c.description}</p>
+      <span class="lien"><span>${c.contenus} contenus</span><span>›</span></span>
+    </a>`).join('');
+})().catch(console.error);
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ressources multimédias enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const medias = [
+  ["▷", "La structure interne de la Terre", "Géographie · Secondaire 2", "12:45", "VIDÉO", "15.2k"],
+  ["♬", "Les figures de style en français", "Français · Secondaire 1", "08:32", "AUDIO", "8.7k"],
+  ["◇", "La photosynthèse expliquée", "Sciences · Secondaire 2", "06:15", "ANIMATION", "12.1k"],
+  ["⌘", "Simulation : Loi d’Ohm", "Physique · Secondaire 3", "", "SIMULATION", "9.6k"],
+  ["▧", "Le Colisée de Rome", "Histoire · Secondaire 2", "", "IMAGE", "4.3k"],
+  ["▤", "Les zones climatiques du monde", "Géographie · Secondaire 1", "", "INFOGRAPHIE", "6.2k"],
+  ["♡", "Modèle 3D : Le cœur humain", "Sciences · Secondaire 3", "", "MODÈLE 3D", "3.8k"],
+  ["▷", "Les éruptions volcaniques", "Sciences · Secondaire 2", "04:50", "ANIMATION", "5.1k"]
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Ressources multimédias - Enseignants</h1>
+    <p>Accédez à une grande variété de contenus multimédias pour illustrer vos cours, captiver vos élèves et enrichir vos activités pédagogiques.</p>
+    <a class="btn btn-contour" href="/apropos" style="margin-top:6px">Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Tous les médias</button><button>Vidéos</button><button>Audios</button><button>Images</button><button>Animations</button><button>Simulations</button><button>Infographies</button><button>Modèles 3D</button></div>
+  <div class="category-scroll">
+    ${[["▷","Vidéos","2 145"],["♬","Audios","865"],["▧","Images","3 248"],["◇","Animations","742"],["⚗","Simulations","512"],["▤","Infographies","1 023"],["□","Modèles 3D","396"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+  <div class="filters-modern">
+    <select><option>Discipline : Toutes</option></select><select><option>Niveau scolaire : Tous</option></select><select><option>Type de média : Tous</option></select><select><option>Format : Tous</option></select><select><option>Trier : Plus récents</option></select><button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>8 931 ressources multimédias</h2><a href="#">Affichage : grille</a></div>
+  <div class="media-grid">
+    ${medias.map(m => `<article class="media-card">
+      <div class="media-thumb"><span>${m[0]}</span>${m[3] ? `<small>${m[3]}</small>` : ""}<small style="left:9px;right:auto;bottom:auto;top:9px">${m[4]}</small></div>
+      <div><b>${m[1]}</b><small>${m[2]}</small><p class="stars">★★★★★ <small>4.8</small></p><p class="object-meta">⌕ ${m[5]} <span style="float:right">⋯</span></p></div>
+    </article>`).join("")}
+  </div>
+  <div class="pagination"><button>Charger plus de ressources ˅</button></div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction("⇧", "Déposer une ressource", "Partagez vos contenus", "#")}
+    ${quickAction("▥", "Créer une collection", "Organisez vos ressources", "#")}
+    ${quickAction("▤", "Mes collections", "Gérez vos collections", "#")}
+    ${quickAction("◷", "Historique", "Consultez vos activités", "#")}
+  </div>
+  <div class="side-card"><h3>Statistiques des médias <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:"Vidéos",meta:"2 145"},{titre:"Audios",meta:"865"},{titre:"Images",meta:"3 248"},{titre:"Animations",meta:"742"},{titre:"Simulations",meta:"512"},{titre:"Infographies",meta:"1 023"},{titre:"Modèles 3D",meta:"396"}])}
+    <p style="margin-top:12px;color:var(--bleu);font-weight:800">Total <span style="float:right">8 931</span></p>
+  </div>
+  <div class="side-card"><h3>Ressources populaires <a href="#">Voir tout</a></h3>${featuredList([{titre:"La respiration cellulaire",meta:"18.7k"},{titre:"La Révolution française",meta:"15.3k"},{titre:"Le système solaire",meta:"12.9k"},{titre:"Les accords du participe passé",meta:"11.2k"},{titre:"Carte du relief d’Afrique",meta:"9.8k"}])}</div>
+  <div class="side-card soft-callout"><h3>Conseil pédagogique</h3><p>Variez vos supports multimédias pour stimuler l’attention et favoriser la compréhension de tous vos élèves.</p></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("multimedia", contenu, droite, {
+  search: "Rechercher une ressource multimédia, un thème, une discipline...",
+  action: '<a class="btn btn-contour btn-petit" href="#">+ Déposer une ressource</a>'
+});
+</script>
+</body>
+</html>

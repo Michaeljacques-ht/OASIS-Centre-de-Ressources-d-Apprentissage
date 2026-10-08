@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ressources méthodologiques enseignant - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const methodes = [
+  ["GUIDE MÉTHODOLOGIQUE", "Concevoir une séquence d’apprentissage efficace", "Toutes disciplines · Secondaire", "8.7k", "1.2k", "▤", ""],
+  ["MÉTHODE", "La classe inversée : guide méthodologique complet", "Toutes disciplines · Secondaire", "6.4k", "980", "♙", "green"],
+  ["GUIDE PRATIQUE", "Différenciation pédagogique : stratégies et pratiques", "Pédagogie · Primaire, Secondaire", "5.2k", "756", "◎", "cyan"],
+  ["FICHE MÉTHODE", "Évaluer par compétences : méthodes et outils", "Évaluation · Tous niveaux", "4.9k", "689", "✓", "warm"],
+  ["GUIDE", "Développer la pensée critique chez les élèves", "Pédagogie · Secondaire", "4.1k", "612", "✦", "purple"],
+  ["MÉTHODE", "Apprentissage collaboratif : méthodes et activités", "Pédagogie · Primaire, Secondaire", "3.8k", "543", "☷", "green"],
+  ["TECHNIQUE", "Gestion de classe positive : techniques efficaces", "Pédagogie · Tous niveaux", "3.5k", "487", "◌", "cyan"],
+  ["GUIDE PRATIQUE", "Intégrer les TICE dans sa pratique pédagogique", "Numérique éducatif · Tous niveaux", "3.2k", "401", "⌘", "navy"]
+];
+
+function carteMethode(m) {
+  return `<article class="edu-resource-card">
+    <div class="edu-thumb ${m[6]}" data-icon="${m[5]}"><span class="edu-label">${m[0]}</span><button class="edu-bookmark">♡</button></div>
+    <div class="edu-card-body"><b>${m[1]}</b><p>${m[2]}</p><div class="edu-card-meta"><span>⌕ ${m[3]}</span><span>⇩ ${m[4]}</span><span>▱</span></div></div>
+  </article>`;
+}
+
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:10px 0 22px">
+    <span class="row-icon" style="width:58px;height:58px;font-size:30px">✦</span>
+    <div><h1>Ressources méthodologiques - Enseignant</h1><p style="color:var(--texte-2)">Des méthodes, guides et stratégies d’enseignement pour améliorer vos pratiques pédagogiques et accompagner efficacement vos élèves.</p></div>
+    <a class="btn btn-contour btn-petit" href="/apropos" style="margin-left:auto">? Guide d’utilisation</a>
+  </section>
+  <h2 class="section-titre">Choisir une discipline</h2>
+  <div class="category-scroll">
+    ${[["▦","Toutes les disciplines",""],["▥","Français",""],["√","Mathématiques",""],["⚗","Sciences",""],["▥","Histoire",""],["◎","Géographie",""],["…","Plus",""]].map((c, i) => `<a class="mini-category ${i === 0 ? "actif" : ""}" href="#"><span>${c[0]}</span><div><b>${c[1]}</b></div></a>`).join("")}
+  </div>
+  <div class="filters-modern">
+    <select><option>Niveau scolaire</option><option>Tous les niveaux</option></select>
+    <select><option>Type de ressource</option><option>Toutes</option></select>
+    <select><option>Approche pédagogique</option><option>Toutes</option></select>
+    <select><option>Format</option><option>Tous les formats</option></select>
+    <button class="btn btn-contour">Filtres avancés</button>
+  </div>
+  <div class="section-head"><h2>1 245 ressources méthodologiques trouvées</h2><a href="#">Trier par : Plus récentes</a></div>
+  <div class="resource-card-grid">${methodes.map(carteMethode).join("")}</div>
+`;
+
+const droite = `
+  <div class="side-card advanced-filter"><h3>Filtres avancés <a href="#">Réinitialiser</a></h3>
+    ${formField("Niveau scolaire", "Sélectionner", "select")}
+    ${formField("Approche pédagogique", "Sélectionner", "select")}
+    ${formField("Compétence visée", "Sélectionner", "select")}
+    ${formField("Durée d’application", "Sélectionner", "select")}
+    ${formField("Mots-clés", "Ex: différenciation, motivation...")}
+    <button class="btn btn-bleu btn-bloc">Appliquer les filtres</button>
+  </div>
+  <div class="side-card"><h3>Ressources méthodologiques populaires <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:"Pédagogie active : principes et mise en œuvre",meta:"12.4k"},{titre:"Conception universelle de l’apprentissage",meta:"9.8k"},{titre:"Taxonomie de Bloom : guide pratique",meta:"8.3k"},{titre:"Motivation des élèves : stratégies efficaces",meta:"7.1k"},{titre:"Gestion du temps en classe",meta:"6.5k"}])}
+  </div>
+  <div class="side-card soft-callout"><h3>Besoin d’aide ?</h3><p>Consultez notre guide méthodologique ou contactez un expert.</p><a class="btn btn-contour btn-petit" href="/apropos">Obtenir de l’aide</a></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("methodologie", contenu, droite, {
+  search: "Rechercher une méthode, une discipline, une technique...",
+  action: '<a class="btn btn-contour btn-petit" href="#">+ Créer</a>'
+});
+</script>
+</body>
+</html>

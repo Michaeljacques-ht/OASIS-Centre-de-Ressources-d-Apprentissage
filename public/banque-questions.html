@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banque de questions enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const questions = [
+  { type: "QCM", titre: "Quelle est la capitale de la France ?", meta: "A. Lyon · B. Marseille · C. Paris · D. Toulouse", tags: ["Géographie", "Secondaire 1", "Facile"], dates: "Créée le 12/05/2024<br>Par vous" },
+  { type: "VRAI/FAUX", titre: "La photosynthèse se déroule uniquement dans les feuilles des plantes.", meta: "", tags: ["Sciences", "Secondaire 2", "Moyenne"], dates: "Créée le 11/05/2024<br>Par vous" },
+  { type: "RÉPONSE COURTE", titre: "Définissez le concept de démocratie.", meta: "", tags: ["Histoire", "Secondaire 3", "Moyenne"], dates: "Créée le 10/05/2024<br>Par vous" },
+  { type: "APPARIEMENT", titre: "Associez les fleuves suivants à leur pays d’origine.", meta: "1. Nil · 2. Amazone · 3. Danube", tags: ["Géographie", "Secondaire 2", "Difficile"], dates: "Créée le 09/05/2024<br>Par vous" },
+  { type: "CHOIX MULTIPLE", titre: "Quels sont les gaz responsables de l’effet de serre ?", meta: "A. Oxygène · B. Dioxyde de carbone · C. Méthane · D. Azote", tags: ["Sciences", "Secondaire 3", "Difficile"], dates: "Créée le 08/05/2024<br>Par vous" },
+  { type: "QCM", titre: "Quelle est la valeur de x dans l’équation 2x + 5 = 21 ?", meta: "A. 6 · B. 7 · C. 8 · D. 9", tags: ["Mathématiques", "Secondaire 1", "Facile"], dates: "Créée le 07/05/2024<br>Par vous" }
+];
+
+function ligneQuestion(q, i) {
+  return `<article class="object-row no-check">
+    <span class="object-icon" style="font-size:12px">${q.type}</span>
+    <div><b>${q.titre}</b><p>${q.meta}</p><div>${q.tags.map(t => `<em class="pill">${t}</em>`).join(" ")}</div></div>
+    <small class="object-meta">${q.dates}</small>
+    <div class="object-actions"><button title="Favori">${i === 1 ? "★" : "☆"}</button><button title="Voir">⌕</button><button title="Modifier">✎</button><button title="Dupliquer">□</button><button title="Plus">⋮</button></div>
+  </article>`;
+}
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Banque de questions - Enseignants</h1>
+    <p>Créez, organisez et gérez vos questions par discipline, thème et niveau. Utilisez-les dans vos évaluations ou partagez-les avec la communauté.</p>
+  </section>
+  <div class="tabs-modern"><button class="actif">Toutes les questions</button><button>Mes questions</button><button>Questions partagées</button><button>Favoris</button><button>Historique</button><button>Corbeille</button></div>
+  <div class="category-scroll">
+    ${[["▧","Tous","8 432 questions"],["▥","Français","1 256 questions"],["▦","Mathématiques","1 845 questions"],["⚗","Sciences","1 203 questions"],["▥","Histoire","964 questions"],["◎","Géographie","876 questions"],["…","Autres disciplines","288 questions"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+  <div class="filters-modern">
+    <select><option>Discipline : Toutes</option></select><select><option>Niveau scolaire : Tous</option></select><select><option>Type de question : Tous</option></select><select><option>Difficulté : Toutes</option></select><input placeholder="Format : Tous"><button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>8 432 questions trouvées</h2><a href="#">Trier par : Plus récentes</a></div>
+  <div class="object-list">${questions.map(ligneQuestion).join("")}</div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Statistiques <a href="#">Voir le rapport</a></h3><div class="chart-donut"></div><p style="text-align:center"><b>8 432</b><br><small>Total</small></p>${featuredList([{titre:"QCM",meta:"3 256 (38%)"},{titre:"Vrai/Faux",meta:"1 245 (15%)"},{titre:"Réponse courte",meta:"1 102 (13%)"},{titre:"Appariement",meta:"892 (11%)"},{titre:"Choix multiple",meta:"1 937 (23%)"}])}</div>
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction("+", "Créer une nouvelle question", "Ajouter une question manuellement", "#")}
+    ${quickAction("⇧", "Importer des questions", "Importer depuis un fichier Excel, Word...", "#")}
+    ${quickAction("✦", "Générer des questions avec l’IA", "Créer des questions automatiquement", "#")}
+    ${quickAction("⇩", "Exporter la banque", "Télécharger vos questions", "#")}
+    ${quickAction("⇄", "Partager une collection", "Partager avec d’autres enseignants", "#")}
+  </div>
+  <div class="side-card"><h3>Collections récentes <a href="#">Voir tout</a></h3>${featuredList([{titre:"Évaluation 1er semestre",meta:"120 questions"},{titre:"Examen final Sciences",meta:"85 questions"},{titre:"Contrôle de Maths - Chapitre 3",meta:"60 questions"},{titre:"Quiz Histoire - Révolution française",meta:"45 questions"}])}</div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Variez les types de questions pour évaluer différentes compétences et favoriser une évaluation complète.</p></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("questions", contenu, droite, {
+  search: "Rechercher une question, un thème, une notion...",
+  action: '<a class="btn btn-contour btn-petit" href="#">+ Déposer une question</a>'
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ressource — OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur">
+  <div class="ariane"><a href="/">Accueil</a> › <a href="/ressources">Ressources</a> › <span id="ariane-titre">Détail</span></div>
+
+  <div class="disposition" style="grid-template-columns: 1fr 320px">
+    <section class="panneau" id="detail"><div class="chargement">Chargement…</div></section>
+
+    <aside>
+      <div class="panneau" style="text-align:center">
+        <h3>Accès rapide par QR Code</h3>
+        <p style="font-size:13px;color:var(--texte-2);margin-bottom:12px">Scannez pour ouvrir cette ressource sur votre téléphone ou la partager.</p>
+        <canvas id="qr" width="180" height="180" style="border:1px solid var(--bord);border-radius:10px"></canvas>
+        <button class="btn btn-contour btn-bloc btn-petit" style="margin-top:12px" onclick="copierLien()">🔗 Copier le lien</button>
+      </div>
+      <div class="panneau">
+        <h3>Nos engagements</h3>
+        <div class="engagements">
+          <span>Contenu vérifié</span>
+          <span>Téléchargement sécurisé</span>
+          <span>Mises à jour régulières</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <h2 class="section-titre">Ressources similaires</h2>
+  <div class="grille" id="similaires"></div>
+  <div style="height:30px"></div>
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('Ressources');
+afficherPied();
+
+function copierLien() {
+  navigator.clipboard.writeText(location.href).then(() => alert('Lien copié dans le presse-papiers.'));
+}
+
+/* QR simplifié : motif de partage dessiné à partir du lien (repli visuel hors-ligne).
+   En production, remplacer par une bibliothèque QR ou une API de génération. */
+function dessinerQR(texte) {
+  const c = document.getElementById('qr'), ctx = c.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 180, 180);
+  ctx.fillStyle = '#0B1F4E';
+  // graine déterministe à partir du texte
+  let h = 0; for (const ch of texte) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const taille = 21, cell = 180 / (taille + 4);
+  const rand = () => { h = (h * 1103515245 + 12345) >>> 0; return h / 4294967295; };
+  for (let y = 0; y < taille; y++) for (let x = 0; x < taille; x++)
+    if (rand() > .5) ctx.fillRect((x + 2) * cell, (y + 2) * cell, cell - 1, cell - 1);
+  // trois yeux de repère
+  for (const [ex, ey] of [[2, 2], [taille - 5, 2], [2, taille - 5]]) {
+    ctx.fillRect(ex * cell, ey * cell, cell * 7, cell * 7);
+    ctx.fillStyle = '#fff'; ctx.fillRect((ex + 1) * cell, (ey + 1) * cell, cell * 5, cell * 5);
+    ctx.fillStyle = '#0B1F4E'; ctx.fillRect((ex + 2) * cell, (ey + 2) * cell, cell * 3, cell * 3);
+  }
+}
+
+async function telecharger(id) {
+  try {
+    const { telechargements } = await API.post('/api/ressources/' + id + '/telecharger');
+    document.getElementById('nb-dl').textContent = fmtNombre(telechargements);
+    alert('Téléchargement démarré ! (démo : le fichier réel sera lié en production)');
+  } catch (e) {
+    if (e.status === 402 && e.data && e.data.paiementRequis) {
+      if (confirm('Cette ressource est premium. Voulez-vous payer maintenant avec PLOP PLOP ?')) acheter(id);
+      return;
+    }
+    alert(e.message);
+  }
+}
+
+async function acheter(id) {
+  if (!Auth.charger()) {
+    location.href = '/connexion?suite=' + encodeURIComponent('/ressource?id=' + id);
+    return;
+  }
+  const bouton = document.getElementById('btn-acheter');
+  if (bouton) { bouton.disabled = true; bouton.textContent = 'Ouverture du paiement...'; }
+  try {
+    const paiement = await API.post('/api/paiement/initier', { ressourceId: id, methode: 'all' });
+    if (paiement.dejaAccessible) {
+      location.href = paiement.suite;
+      return;
+    }
+    if (paiement.urlPaiement) window.open(paiement.urlPaiement, '_blank', 'noopener');
+    location.href = paiement.suite;
+  } catch (e) {
+    alert(e.message);
+    if (bouton) { bouton.disabled = false; bouton.textContent = 'Payer avec PLOP PLOP'; }
+  }
+}
+
+(async () => {
+  const id = param('id');
+  const r = await API.get('/api/ressources/' + id).catch(() => null);
+  if (!r) {
+    document.getElementById('detail').innerHTML = '<div class="vide"><span class="emoji">🔎</span>Ressource introuvable.<br><a class="btn btn-bleu btn-petit" style="margin-top:12px" href="/ressources">← Retour aux ressources</a></div>';
+    return;
+  }
+  document.title = r.titre + ' — OASIS';
+  document.getElementById('ariane-titre').textContent = r.titre;
+  const t = TYPE_INFO[r.type] || { label: r.type, emoji: '📁' };
+  const cls = MATIERE_CLASSE[r.matiere] || 'v-def';
+  const prix = Number(r.prixHTG || r.prix || 0);
+  const acces = !!r.accesAutorise;
+  if (param('paiement') === 'ok') setTimeout(() => alert('Paiement confirmé. Votre ressource est débloquée.'), 300);
+  document.getElementById('detail').innerHTML = `
+    <div class="carte-visuel ${cls}" style="height:200px;border-radius:10px;font-size:64px">
+      <span class="etiquette">${prix > 0 ? fmtHTG(prix) : t.label}</span>${t.emoji}
+    </div>
+    <h1 style="font-size:24px;margin:18px 0 8px">${r.titre}</h1>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <span class="tag-type">${r.matiere}</span>
+      <span class="tag-type" style="background:var(--vert-clair);color:var(--vert)">${r.classe || r.niveau}</span>
+      <span class="tag-type" style="background:${prix > 0 ? '#FEF3E2' : 'var(--vert-clair)'};color:${prix > 0 ? 'var(--orange)' : 'var(--vert)'}">${prix > 0 ? 'Premium · ' + fmtHTG(prix) : 'Gratuit'}</span>
+      ${r.duree ? '<span class="tag-type" style="background:#FEF3E2;color:var(--orange)">⏱ ' + r.duree + '</span>' : ''}
+    </div>
+    <p style="color:var(--texte-2);margin-bottom:16px">${r.description}</p>
+    <div style="display:flex;gap:22px;font-size:14px;color:var(--texte-2);margin-bottom:20px">
+      <span>⬇ <b id="nb-dl">${fmtNombre(r.telechargements)}</b> téléchargements</span>
+      <span class="etoile">★ ${r.note} (${r.votes} avis)</span>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      ${prix > 0 && !acces
+        ? `<button id="btn-acheter" class="btn btn-bleu" onclick="acheter('${r.id}')">Payer avec PLOP PLOP · ${fmtHTG(prix)}</button>
+           <button class="btn btn-contour" onclick="telecharger('${r.id}')">Vérifier l'accès</button>`
+        : `<button class="btn btn-bleu" onclick="telecharger('${r.id}')">⬇ Télécharger la ressource</button>`}
+      <button class="btn btn-contour" onclick="basculerFavori('${r.id}', this.querySelector('span'))"><span>🤍</span> Ajouter aux favoris</button>
+    </div>`;
+
+  dessinerQR(location.href);
+
+  const sim = await API.get('/api/ressources?parPage=5&matiere=' + encodeURIComponent(r.matiere));
+  document.getElementById('similaires').innerHTML =
+    sim.items.filter(x => x.id !== r.id).slice(0, 4).map(x => carteRessource(x)).join('');
+})().catch(console.error);
+</script>
+</body>
+</html>

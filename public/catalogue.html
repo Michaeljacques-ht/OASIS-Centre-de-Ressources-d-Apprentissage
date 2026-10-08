@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalogue — OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur">
+
+  <div class="ariane"><a href="/">Accueil</a> › <span id="ariane-page">Catalogue</span></div>
+
+  <div class="bandeau">
+    <div class="bandeau-titre">
+      <h1><span class="pastille-icone" id="icone-page">📚</span> <span id="titre-page">Catalogue</span></h1>
+      <p id="soustitre-page"></p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="disposition avec-aside">
+    <aside>
+      <div class="panneau">
+        <h3>Catégories</h3>
+        <div class="liste-cat" id="filtre-matieres"></div>
+        <div class="filtre-groupe">
+          <h3>Niveau</h3>
+          <div id="filtre-niveaux"></div>
+        </div>
+        <button class="btn btn-contour btn-bloc btn-petit" style="margin-top:14px" onclick="reinitialiser()">⟳ Réinitialiser les filtres</button>
+      </div>
+    </aside>
+
+    <section>
+      <div class="barre-outils">
+        <div class="onglets" id="onglets"></div>
+        <div class="tri">Trier par :
+          <select id="tri" onchange="etat.tri=this.value; charger(1)">
+            <option value="recentes">Plus récentes</option>
+            <option value="populaires">Plus populaires</option>
+            <option value="notees">Les mieux notées</option>
+          </select>
+        </div>
+      </div>
+
+      <h2 class="section-titre" id="titre-section">Ressources récentes</h2>
+      <div class="grille" id="grille"><div class="chargement">Chargement…</div></div>
+      <div class="pagination" id="pagination"></div>
+      <div class="pagination-info" id="pagination-info"></div>
+    </section>
+
+    <aside class="aside-droite">
+      <div class="panneau">
+        <h3>Besoin d'aide ?</h3>
+        <p style="font-size:13px;color:var(--texte-2);margin-bottom:12px">Nous sommes là pour vous accompagner.</p>
+        <div class="aide-liste">
+          <a href="/apropos">ℹ️ FAQ</a>
+          <a href="/apropos">📘 Guides d'utilisation</a>
+          <a href="/apropos">🎥 Tutoriels vidéo</a>
+          <a href="/apropos">💬 Contacter le support</a>
+        </div>
+        <a href="/apropos" class="btn btn-bleu btn-bloc btn-petit" style="margin-top:14px">Centre d'aide</a>
+      </div>
+      <div class="panneau">
+        <div style="font-size:34px">🎓</div>
+        <h3 style="margin-top:8px">Vous êtes enseignant ?</h3>
+        <p style="font-size:13px;color:var(--texte-2);margin-bottom:12px">Partagez vos contenus et aidez la communauté éducative.</p>
+        <a href="/dashboard" class="btn btn-contour btn-bloc btn-petit">Devenir contributeur</a>
+      </div>
+      <div class="panneau">
+        <h3>Nos engagements</h3>
+        <div class="engagements">
+          <span>Contenus vérifiés</span>
+          <span>Téléchargements sécurisés</span>
+          <span>Ressources de qualité</span>
+          <span>Mises à jour régulières</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="cta">
+    <div style="font-size:40px" id="cta-emoji">📚</div>
+    <div><h2 id="cta-titre">Des contenus prêts à l'emploi pour des cours clairs et impactants !</h2>
+    <p>Gagnez du temps dans la préparation de vos cours avec nos contenus professionnels et adaptés à chaque niveau.</p></div>
+    <a href="/inscription" class="btn btn-bleu">Créer un compte gratuitement →</a>
+  </div>
+
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('Ressources');
+afficherPied();
+
+const CONFIG_TYPES = {
+  '': { titre: 'Toutes les ressources', icone: '🎒', sous: 'Accédez à des milliers de ressources éducatives pour enseigner, apprendre et réussir.' },
+  fiche: { titre: 'Fiches pédagogiques', icone: '📄', sous: 'Fiches de cours, synthèses et guides prêts à l’emploi.' },
+  exercice: { titre: 'Exercices & Corrigés', icone: '✅', sous: 'Exercices, devoirs et corrigés pour s’entraîner efficacement.' },
+  support: { titre: 'Supports de cours', icone: '📚', sous: 'Accédez à des supports de cours complets, structurés et adaptés à chaque niveau et discipline.' },
+  presentation: { titre: 'Présentations (PPTX) de cours', icone: '🖥️', sous: 'Accédez à des présentations de cours prêtes à l’emploi pour expliquer, enseigner et illustrer efficacement vos leçons.' },
+  video: { titre: 'Vidéos éducatives', icone: '🎬', sous: 'Apprenez, comprenez et progressez grâce à des vidéos pédagogiques de qualité.' },
+  podcast: { titre: 'Audios & Podcasts', icone: '🎧', sous: 'Leçons audio, révisions et podcasts éducatifs à écouter partout.' },
+  document: { titre: 'Documents', icone: '📕', sous: 'PDF, guides, rapports, annales et documents pédagogiques à télécharger.' }
+};
+
+const etat = { type: param('type'), matiere: '', niveau: '', tri: 'recentes', page: 1, onglet: 'toutes' };
+let favorisIds = [];
+
+const cfg = CONFIG_TYPES[etat.type] || CONFIG_TYPES[''];
+document.title = cfg.titre + ' — OASIS';
+document.getElementById('titre-page').textContent = cfg.titre;
+document.getElementById('icone-page').textContent = cfg.icone;
+document.getElementById('soustitre-page').textContent = cfg.sous;
+document.getElementById('ariane-page').textContent = cfg.titre;
+
+function reinitialiser() { etat.matiere = ''; etat.niveau = ''; etat.onglet = 'toutes'; document.getElementById('tri').value = etat.tri = 'recentes'; charger(1); }
+
+function choisirMatiere(m) { etat.matiere = etat.matiere === m ? '' : m; charger(1); }
+function choisirNiveau(n) { etat.niveau = etat.niveau === n ? '' : n; charger(1); }
+function choisirOnglet(o) {
+  etat.onglet = o;
+  etat.tri = o === 'populaires' ? 'populaires' : o === 'notees' ? 'notees' : 'recentes';
+  document.getElementById('tri').value = etat.tri;
+  charger(1);
+}
+
+async function charger(page) {
+  etat.page = page;
+  const url = `/api/ressources?parPage=12&page=${page}&tri=${etat.tri}`
+    + (etat.type ? '&type=' + etat.type : '')
+    + (etat.matiere ? '&matiere=' + encodeURIComponent(etat.matiere) : '')
+    + (etat.niveau ? '&niveau=' + encodeURIComponent(etat.niveau) : '');
+  const res = await API.get(url);
+
+  document.getElementById('grille').innerHTML = res.total
+    ? res.items.map(r => carteRessource(r, favorisIds)).join('')
+    : '<div class="vide"><span class="emoji">📭</span>Aucune ressource pour ces filtres. Modifiez vos critères pour élargir la recherche.</div>';
+  document.getElementById('pagination').innerHTML = paginationHTML(res.total, page, 12, 'charger');
+  const debut = res.total ? (page - 1) * 12 + 1 : 0;
+  document.getElementById('pagination-info').textContent =
+    `Affichage de ${debut} à ${Math.min(page * 12, res.total)} sur ${res.total} ressources`;
+  window.scrollTo({ top: 0 });
+}
+
+(async () => {
+  if (Auth.charger()) favorisIds = (await API.get('/api/favoris').catch(() => ({ ids: [] }))).ids;
+
+  // Statistiques du type
+  const [tout, s] = await Promise.all([
+    API.get('/api/ressources?parPage=1000' + (etat.type ? '&type=' + etat.type : '')),
+    API.get('/api/stats')
+  ]);
+  const dl = tout.items.reduce((x, r) => x + r.telechargements, 0);
+  document.getElementById('stats').innerHTML = [
+    ['🗂️', 'ic-bleu', tout.total + '+', cfg.titre + ' disponibles'],
+    ['📁', 'ic-vert', s.categories, 'Catégories'],
+    ['⬇️', 'ic-violet', fmtNombre(dl) + '+', 'Téléchargements'],
+    ['👥', 'ic-orange', (s.apprenants + s.enseignants) + '+', 'Apprenants'],
+    ['⭐', 'ic-rose', '4.8/5', 'Note moyenne']
+  ].map(([e, c, v, l]) => `<div class="stat"><div class="ic ${c}">${e}</div><div><b>${v}</b><small>${l}</small></div></div>`).join('');
+
+  // Onglets
+  document.getElementById('onglets').innerHTML = [
+    ['toutes', 'Toutes les ressources'], ['recentes', 'Récentes'],
+    ['populaires', 'Populaires'], ['notees', 'Les mieux notées']
+  ].map(([o, l]) => `<button class="onglet ${etat.onglet === o ? 'actif' : ''}" onclick="choisirOnglet('${o}'); this.parentNode.querySelectorAll('.onglet').forEach(b=>b.classList.remove('actif')); this.classList.add('actif')">${l}</button>`).join('');
+
+  // Filtres latéraux (comptes par matière et niveau)
+  const parMatiere = {}, parNiveau = {};
+  tout.items.forEach(r => {
+    parMatiere[r.matiere] = (parMatiere[r.matiere] || 0) + 1;
+    parNiveau[r.niveau] = (parNiveau[r.niveau] || 0) + 1;
+  });
+  document.getElementById('filtre-matieres').innerHTML =
+    `<a href="javascript:void(0)" class="actif" onclick="etat.matiere=''; charger(1)">▦ Toutes les catégories <span class="n">${tout.total}</span></a>` +
+    Object.entries(parMatiere).map(([m, n]) =>
+      `<a href="javascript:void(0)" onclick="choisirMatiere('${m.replace(/'/g, "\\'")}')">${m} <span class="n">${n}</span></a>`).join('');
+  document.getElementById('filtre-niveaux').innerHTML =
+    ['Primaire', 'Collège', 'Lycée'].map(n =>
+      `<label><input type="checkbox" onchange="choisirNiveau('${n}')"> ${n} <span class="n">${parNiveau[n] || 0}</span></label>`).join('');
+
+  charger(1);
+})().catch(console.error);
+</script>
+</body>
+</html>

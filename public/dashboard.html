@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon espace - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const user = Auth.charger();
+if (!user) {
+  location.href = '/connexion';
+  throw new Error('Connexion requise');
+}
+
+const onglets = {
+  apprenant: [['progression', 'Progression'], ['favoris', 'Favoris'], ['quiz', 'Quiz']],
+  enseignant: [['progression', 'Progression'], ['publier', 'Publier une ressource'], ['creer-quiz', 'Créer un quiz'], ['favoris', 'Favoris']],
+  admin: [['progression', 'Statistiques'], ['utilisateurs', 'Utilisateurs'], ['ressources', 'Ressources'], ['publier', 'Publier']]
+};
+let actif = (onglets[user.role] || onglets.apprenant)[0][0];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Tableau de bord ${nomRole(user.role)}</h1>
+    <p>Bienvenue, ${user.nom}. Gérez vos ressources, votre progression, vos favoris et vos activités dans l’espace OASIS.</p>
+    <div class="hero-chips"><span>Bibliothèque</span><span>Progression</span><span>Favoris</span><span>Partage</span></div>
+  </section>
+  <div class="dash-stats" id="stats"></div>
+  <div class="tabs-modern" id="tabs"></div>
+  <section id="zone"><div class="chargement">Chargement...</div></section>
+`;
+
+const droite = `
+  <div class="side-card">
+    <h3>Accès rapide</h3>
+    ${quickAction('▥', 'Bibliothèque numérique', 'Explorer les ressources', '/ressources')}
+    ${quickAction('▷', 'Ressources multimédia', 'Vidéos et podcasts', '/multimedia')}
+    ${quickAction('⇄', 'Partage de ressources', 'Publier et réutiliser', '/partage')}
+    ${quickAction('♙', 'Groupes', 'Collaborer', '/groupes')}
+  </div>
+  <div class="side-card soft-callout">
+    <h3>Conseil OASIS</h3>
+    <p>Organisez vos ressources par thème et ajoutez les contenus importants à vos favoris pour les retrouver rapidement.</p>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('dashboard', contenu, droite, {
+  search: 'Rechercher dans mon espace OASIS...'
+});
+
+function dessinerTabs() {
+  document.getElementById('tabs').innerHTML = (onglets[user.role] || onglets.apprenant)
+    .map(([id, label]) => `<button class="${actif === id ? 'actif' : ''}" onclick="actif='${id}'; dessinerTabs(); afficherOnglet()">${label}</button>`).join('');
+}
+
+async function afficherOnglet() {
+  const zone = document.getElementById('zone');
+  zone.innerHTML = '<div class="chargement">Chargement...</div>';
+
+  if (actif === 'progression') {
+    const resultats = await API.get('/api/resultats').catch(() => []);
+    const moyenne = resultats.length ? Math.round(resultats.reduce((s, r) => s + r.score / r.total, 0) / resultats.length * 100) : 0;
+    zone.innerHTML = `
+      <div class="dash-stats">
+        ${statCard('?', resultats.length, 'Quiz réalisés')}
+        ${statCard('★', moyenne + '%', 'Score moyen', 'green')}
+        ${statCard('▥', resultats.filter(r => r.score / r.total >= .7).length, 'Badges obtenus', 'orange')}
+      </div>
+      <div class="panel-clean">
+        <h3>Historique de progression</h3>
+        ${resultats.length ? `<table class="tableau"><thead><tr><th>Quiz</th><th>Score</th><th>Résultat</th><th>Date</th></tr></thead><tbody>
+          ${resultats.map(r => `<tr><td>${r.quizTitre}</td><td><b>${r.score}/${r.total}</b></td><td>${Math.round(r.score / r.total * 100)}%</td><td>${new Date(r.date).toLocaleDateString('fr-FR')}</td></tr>`).join('')}
+        </tbody></table>` : '<div class="vide"><span class="emoji">?</span>Aucun quiz réalisé pour l’instant.<br><a class="btn btn-bleu btn-petit" style="margin-top:12px" href="/quiz">Commencer un quiz</a></div>'}
+      </div>`;
+    return;
+  }
+
+  if (actif === 'favoris') {
+    const { items, ids } = await API.get('/api/favoris').catch(() => ({ items: [], ids: [] }));
+    zone.innerHTML = items.length
+      ? `<div class="resource-grid">${items.map(r => carteRessource(r, ids)).join('')}</div>`
+      : '<div class="vide"><span class="emoji">♡</span>Aucun favori pour l’instant.<br><a class="btn btn-bleu btn-petit" style="margin-top:12px" href="/ressources">Explorer les ressources</a></div>';
+    return;
+  }
+
+  if (actif === 'quiz') { location.href = '/quiz'; return; }
+
+  if (actif === 'publier') {
+    zone.innerHTML = `<div class="panel-clean" style="max-width:640px">
+      <h3>Publier une nouvelle ressource</h3>
+      <div class="alerte" id="alerte-pub"></div>
+      <div class="champ"><label>Titre</label><input id="p-titre" placeholder="Ex. : Guide pratique : La photosynthèse"></div>
+      <div class="champ"><label>Type</label><select id="p-type">
+        <option value="fiche">Fiche pédagogique</option><option value="exercice">Exercices & corrigés</option>
+        <option value="support">Support de cours</option><option value="presentation">Présentation</option>
+        <option value="video">Vidéo éducative</option><option value="podcast">Audio / podcast</option><option value="document">Document PDF</option></select></div>
+      <div class="champ"><label>Matière</label><select id="p-matiere">
+        ${['Mathématiques','Sciences Physiques','SVT','Français','Anglais','Histoire-Géo','Informatique','Économie & Gestion','Philosophie','Éducation Civique'].map(m => `<option>${m}</option>`).join('')}
+      </select></div>
+      <div class="champ"><label>Niveau</label><select id="p-niveau"><option>Primaire</option><option>Collège</option><option selected>Lycée</option></select></div>
+      <div class="champ"><label>Classe</label><input id="p-classe" placeholder="Ex. : NS3, Terminale, 3e cycle"></div>
+      <div class="champ"><label>Description</label><textarea id="p-desc" rows="3" placeholder="Décrivez brièvement la ressource..."></textarea></div>
+      <button class="btn btn-bleu btn-bloc" onclick="publier()">Publier la ressource</button>
+    </div>`;
+    return;
+  }
+
+  if (actif === 'creer-quiz') {
+    zone.innerHTML = `<div class="panel-clean" style="max-width:760px">
+      <h3>Créer un quiz</h3>
+      <div class="alerte" id="alerte-qz"></div>
+      <div class="champ"><label>Titre du quiz</label><input id="q-titre" placeholder="Ex. : Quiz : Les fractions"></div>
+      <div class="card-grid-2">
+        <div class="champ"><label>Matière</label><input id="q-matiere" placeholder="Mathématiques"></div>
+        <div class="champ"><label>Niveau</label><select id="q-niveau"><option>Primaire</option><option>Collège</option><option selected>Lycée</option></select></div>
+      </div>
+      <div class="champ"><label>Durée (minutes)</label><input id="q-duree" type="number" value="5" min="1"></div>
+      <div id="q-liste"></div>
+      <button class="btn btn-contour btn-petit" onclick="ajouterQuestion()">+ Ajouter une question</button>
+      <button class="btn btn-bleu btn-bloc" style="margin-top:14px" onclick="creerQuiz()">Enregistrer le quiz</button>
+    </div>`;
+    ajouterQuestion();
+    return;
+  }
+
+  if (actif === 'utilisateurs') {
+    const users = await API.get('/api/admin/utilisateurs');
+    zone.innerHTML = `<div class="panel-clean"><h3>Gestion des utilisateurs (${users.length})</h3>
+      <table class="tableau"><thead><tr><th>Nom</th><th>Courriel</th><th>Rôle</th><th>Inscription</th><th>Action</th></tr></thead><tbody>
+      ${users.map(u => `<tr><td><b>${u.nom}</b></td><td>${u.email}</td><td>${u.role}</td><td>${new Date(u.createdAt).toLocaleDateString('fr-FR')}</td>
+      <td><select onchange="changerRole('${u.id}', this.value)" ${u.id === user.id ? 'disabled' : ''}>${['apprenant','enseignant','admin'].map(r => `<option ${r === u.role ? 'selected' : ''}>${r}</option>`).join('')}</select></td></tr>`).join('')}
+      </tbody></table></div>`;
+    return;
+  }
+
+  if (actif === 'ressources') {
+    const res = await API.get('/api/ressources?parPage=1000');
+    zone.innerHTML = `<div class="panel-clean"><h3>Gestion des ressources (${res.total})</h3>
+      <table class="tableau"><thead><tr><th>Titre</th><th>Type</th><th>Matière</th><th>Téléchargements</th><th>Action</th></tr></thead><tbody>
+      ${res.items.map(r => `<tr><td><a href="/ressource?id=${r.id}" style="color:var(--bleu)">${r.titre}</a></td><td>${r.type}</td><td>${r.matiere}</td><td>${fmtNombre(r.telechargements)}</td><td><button class="btn btn-contour btn-petit" onclick="supprimerRessource('${r.id}')">Supprimer</button></td></tr>`).join('')}
+      </tbody></table></div>`;
+  }
+}
+
+async function publier() {
+  const alerte = document.getElementById('alerte-pub');
+  try {
+    await API.post('/api/ressources', {
+      titre: document.getElementById('p-titre').value,
+      type: document.getElementById('p-type').value,
+      matiere: document.getElementById('p-matiere').value,
+      niveau: document.getElementById('p-niveau').value,
+      classe: document.getElementById('p-classe').value,
+      description: document.getElementById('p-desc').value
+    });
+    alerte.className = 'alerte succes';
+    alerte.textContent = 'Ressource publiée. Elle apparaît maintenant dans le catalogue OASIS.';
+    document.getElementById('p-titre').value = '';
+  } catch (e) { alerte.className = 'alerte erreur'; alerte.textContent = e.message; }
+}
+
+let nbQuestions = 0;
+function ajouterQuestion() {
+  nbQuestions++;
+  document.getElementById('q-liste').insertAdjacentHTML('beforeend', `
+    <div class="panel-clean" style="padding:14px;margin-bottom:12px" data-question>
+      <div class="champ"><label>Question ${nbQuestions}</label><input class="qq" placeholder="Énoncé de la question"></div>
+      <div class="card-grid-2">${[0,1,2,3].map(i => `<input class="qo" placeholder="Option ${['A','B','C','D'][i]}" style="padding:9px 11px;border:1px solid var(--bord);border-radius:8px">`).join('')}</div>
+      <div class="champ" style="margin-top:10px"><label>Bonne réponse</label><select class="qb"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>
+      <div class="champ"><label>Explication</label><input class="qe" placeholder="Pourquoi cette réponse est correcte..."></div>
+    </div>`);
+}
+
+async function creerQuiz() {
+  const alerte = document.getElementById('alerte-qz');
+  const questions = [...document.querySelectorAll('[data-question]')].map(el => ({
+    q: el.querySelector('.qq').value,
+    options: [...el.querySelectorAll('.qo')].map(o => o.value).filter(Boolean),
+    bonne: parseInt(el.querySelector('.qb').value),
+    explication: el.querySelector('.qe').value || 'Bonne réponse.'
+  })).filter(q => q.q && q.options.length >= 2);
+  try {
+    await API.post('/api/quiz', {
+      titre: document.getElementById('q-titre').value,
+      matiere: document.getElementById('q-matiere').value,
+      niveau: document.getElementById('q-niveau').value,
+      duree: parseInt(document.getElementById('q-duree').value) * 60,
+      questions
+    });
+    alerte.className = 'alerte succes';
+    alerte.textContent = 'Quiz créé. Il est disponible dans la section Quiz.';
+  } catch (e) { alerte.className = 'alerte erreur'; alerte.textContent = e.message; }
+}
+
+async function changerRole(id, role) {
+  await API.put('/api/admin/utilisateurs/' + id, { role });
+  alert('Rôle mis à jour.');
+}
+
+async function supprimerRessource(id) {
+  if (!confirm('Supprimer définitivement cette ressource ?')) return;
+  await API.del('/api/ressources/' + id);
+  afficherOnglet();
+}
+
+(async () => {
+  const s = await API.get('/api/stats');
+  document.getElementById('stats').innerHTML = [
+    statCard('▥', s.ressources, 'Ressources'),
+    statCard('?', s.quiz, 'Quiz', 'green'),
+    statCard('⇩', fmtNombre(s.telechargements), 'Téléchargements', 'purple'),
+    statCard('★', s.tauxReussite + '%', 'Taux de réussite', 'orange')
+  ].join('');
+  dessinerTabs();
+  afficherOnglet();
+})().catch(console.error);
+</script>
+</body>
+</html>

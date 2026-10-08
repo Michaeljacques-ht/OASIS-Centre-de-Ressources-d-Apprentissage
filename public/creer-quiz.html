@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Créer un quiz - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const questions = [
+  ["Q1", "Quel est le plus long fleuve du monde ?", "QCM · 4 points", true],
+  ["Q2", "Les montagnes se forment par :", "QCM · 4 points"],
+  ["Q3", "Associez chaque climat à sa caractéristique principale.", "Association · 6 points"],
+  ["Q4", "Vrai ou Faux : Le soleil se lève à l’ouest.", "Vrai/Faux · 2 points"],
+  ["Q5", "Complétez : L’atmosphère est composée de ___ et d’autres gaz.", "Complétion · 3 points"],
+  ["Q6", "Quel phénomène provoque les marées ?", "QCM · 4 points"]
+];
+
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:8px 0 18px">
+    <span class="row-icon" style="width:64px;height:64px;font-size:32px">▧</span>
+    <div><h1>Créer un quiz <span style="font-size:20px">✎</span></h1><p style="color:var(--texte-2)">Concevez des quiz interactifs et évaluez les apprentissages de vos élèves.</p></div>
+    <a class="btn btn-contour btn-petit" href="#" style="margin-left:auto">⌕ Aperçu du quiz</a>
+  </section>
+  <div class="wizard-steps"><span class="actif"><b>✓</b>Informations</span><span class="actif"><b>2</b>Questions</span><span><b>3</b>Paramètres</span><span><b>4</b>Publication</span></div>
+  <section class="form-panel" style="padding:0;overflow:hidden">
+    <div class="question-toolbar" style="padding:16px 18px;border-bottom:1px solid var(--bord);margin:0">
+      <h3>Questions (12)</h3>
+      <div><button class="btn btn-bleu btn-petit">+ Ajouter une question</button> <button class="btn btn-contour btn-petit">⇧ Importer des questions</button> <button class="btn btn-contour btn-petit">Trier</button></div>
+    </div>
+    <div class="question-builder">
+      <aside class="question-sidebar">
+        <div class="question-section"><b>Section 1 : Géographie physique</b><br><small style="color:var(--texte-2)">6 questions</small></div>
+        <div style="padding:12px">
+          ${questions.map(q => `<div class="question-item ${q[3] ? "actif" : ""}"><b>${q[0]}</b><div><strong>${q[1]}</strong><br><small>${q[2]}</small></div><span>${q[3] ? "✓" : "○"}</span></div>`).join("")}
+        </div>
+        <div class="question-section"><b>Section 2 : Climat et environnement</b><br><small style="color:var(--texte-2)">4 questions</small></div>
+        <div class="question-section"><b>Section 3 : Cartographie</b><br><small style="color:var(--texte-2)">2 questions</small></div>
+        <div style="padding:14px"><button class="btn btn-contour btn-bloc">+ Ajouter une section</button></div>
+      </aside>
+      <main class="question-editor">
+        <div class="form-grid">
+          <div class="champ"><label>Type de question</label><select><option>QCM (Choix multiple)</option><option>Vrai/Faux</option><option>Réponse courte</option></select></div>
+          <div class="champ"><label>Points de la question</label><input value="4"></div>
+        </div>
+        <h3>Énoncé de la question</h3>
+        <div class="editor-box" style="min-height:68px;border-radius:8px;margin-bottom:0;color:var(--texte)">Quel est le plus long fleuve du monde ?</div>
+        <div class="toolbar-mini" style="border:1px solid var(--bord);border-top:0;border-radius:0 0 8px 8px;margin-bottom:22px"><b>B</b><i>I</i><u>U</u><span>☰</span><span>↗</span><span>x₂</span><span>Ω</span><button class="btn btn-contour btn-petit" style="margin-left:auto">Ajouter un média</button></div>
+        <h3>Options de réponse</h3>
+        ${[["A","Le Nil"],["B","L’Amazone",true],["C","Le Yangtsé"],["D","Le Mississippi"]].map(o => `<div class="option-edit"><span class="option-letter ${o[2] ? "green" : ""}">${o[0]}</span><input value="${o[1]}"><span class="radio-dot ${o[2] ? "actif" : ""}"></span><button title="Supprimer">♢</button></div>`).join("")}
+        <div class="toggle-row" style="justify-content:flex-start"><span class="toggle"></span><b>Réponses aléatoires</b></div>
+        <div class="footer-action"><button class="btn btn-contour">← Précédent</button><button class="btn btn-bleu">Suivant →</button></div>
+      </main>
+    </div>
+  </section>
+`;
+
+const droite = `
+  <div class="side-card soft-callout"><h3>Paramètres du quiz</h3>
+    <p><b>Titre du quiz</b><br><small>Les fleuves et les paysages</small></p>
+    <p><b>Discipline</b><br><small>Géographie</small></p>
+    <p><b>Niveau scolaire</b><br><small>Secondaire 2</small></p>
+    <p><b>Durée</b><br><small>30 minutes</small></p>
+    <p><b>Nombre de questions</b><br><small>12</small></p>
+    <a href="#" class="btn btn-contour btn-petit">⚙ Modifier les paramètres</a>
+  </div>
+  <div class="side-card"><h3>Aperçu du quiz <a href="#">Voir tout</a></h3>
+    <p><span class="pill">Q1</span> 4 points</p>
+    <p><b>Quel est le plus long fleuve du monde ?</b></p>
+    <div class="option"><span class="lettre">A</span>Le Nil</div>
+    <div class="option bonne"><span class="lettre">B</span>L’Amazone</div>
+    <div class="option"><span class="lettre">C</span>Le Yangtsé</div>
+    <div class="option"><span class="lettre">D</span>Le Mississippi</div>
+  </div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Variez les types de questions pour évaluer connaissances, compréhension et analyse.</p></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("quiz", contenu, droite, {
+  search: "Rechercher un quiz, une question, une notion...",
+  action: '<a class="btn btn-bleu btn-petit" href="/creer-quiz">+ Créer un quiz</a>'
+});
+</script>
+</body>
+</html>

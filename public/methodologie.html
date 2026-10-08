@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ressources méthodologiques - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const lignes = [
+  ['◎', 'Comment prendre des notes efficaces', 'Découvre des techniques pour prendre des notes claires, organisées et utiles pour tes révisions.', ['Méthodes d’étude', 'Prendre des notes'], '10 min'],
+  ['▣', 'Planifier son temps d’étude', 'Apprends à planifier ton temps pour être plus productif et éviter le stress avant les examens.', ['Organisation', 'Gestion du temps'], '8 min'],
+  ['◇', 'La méthode SQ3R pour mieux comprendre', 'Une méthode simple et puissante pour lire, comprendre et retenir l’essentiel des leçons.', ['Lecture active'], '12 min'],
+  ['↻', 'Réviser efficacement avant un examen', 'Des stratégies de révision pour mieux mémoriser et réussir tes évaluations.', ['Évaluation', 'Révision'], '9 min'],
+  ['♙', 'Travailler en équipe avec efficacité', 'Conseils pour collaborer, partager les tâches et atteindre vos objectifs ensemble.', ['Collaboration'], '7 min']
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Ressources méthodologiques</h1>
+    <p>Découvre des méthodes, techniques et outils pour mieux apprendre, organiser ton travail et réussir tes apprentissages.</p>
+    <div class="hero-chips"><span>Apprendre à apprendre</span><span>Prendre des notes</span><span>Gérer son temps</span><span>Réviser efficacement</span><span>Travailler en équipe</span></div>
+  </section>
+  <div class="dash-stats">
+    ${statCard('▦', '126', 'Toutes les ressources')}
+    ${statCard('▤', '32', 'Méthodes d’étude', 'green')}
+    ${statCard('▣', '21', 'Organisation', 'orange')}
+    ${statCard('◇', '28', 'Techniques d’apprentissage', 'purple')}
+    ${statCard('↻', '19', 'Évaluation et révision', 'pink')}
+  </div>
+  <div class="filters-modern">
+    <select><option>Niveau : Tous</option><option>Primaire</option><option>Secondaire</option></select>
+    <input style="grid-column: span 3" placeholder="Rechercher une ressource méthodologique...">
+    <button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>Ressources méthodologiques</h2><a href="/catalogue?type=fiche">Voir plus</a></div>
+  <div class="resource-list">
+    ${lignes.map(l => resourceRow(l[0], l[1], l[2], l[3], l[4])).join('')}
+  </div>
+`;
+
+const droite = `
+  <div class="side-card">
+    <h3>Outils pratiques</h3>
+    ${quickAction('✓', 'Auto-évaluation de mes méthodes', 'Évalue tes habitudes d’étude', '#')}
+    ${quickAction('◷', 'Planificateur d’étude', 'Organise ton calendrier', '#')}
+    ${quickAction('▤', 'Fiches à imprimer', 'Télécharge des fiches', '#')}
+    ${quickAction('□', 'Boîte à outils', 'Des outils pour apprendre', '#')}
+  </div>
+  <div class="side-card">
+    <h3>Ressources recommandées <a href="/catalogue?type=fiche">Voir tout</a></h3>
+    ${featuredList([
+      { titre: 'Carte mentale : méthode Mind Mapping', meta: 'Guide' },
+      { titre: 'Les 7 habitudes des élèves qui réussissent', meta: 'Vidéo' },
+      { titre: 'Fiche : comment faire un résumé ?', meta: 'Fiche' }
+    ])}
+  </div>
+  <div class="side-card green-callout">
+    <h3>Conseil du jour</h3>
+    <p>La clé de la réussite, c’est la régularité. Étudie un peu chaque jour et tu iras loin.</p>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('methodologie', contenu, droite, {
+  search: 'Rechercher une méthode, une technique, une ressource...'
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outils éducatifs - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const tools = [
+  ['Canva Éducation','Création de contenu','Créez des visuels, affiches, présentations et infographies.','C'],
+  ['Kahoot!','Évaluation','Créez des quiz interactifs et des jeux d’apprentissage.','K!'],
+  ['Google Workspace for Education','Collaboration','Documents, feuilles de calcul et présentations collaboratives.','G'],
+  ['Microsoft Teams','Classe virtuelle','Animez vos cours en ligne et interagissez avec vos élèves.','T'],
+  ['Padlet','Collaboration','Tableau mural collaboratif pour vos idées et ressources.','P']
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Outils éducatifs</h1>
+    <p>Découvrez et utilisez des outils numériques pour enrichir vos enseignements, gagner du temps et engager vos élèves.</p>
+  </section>
+  <div class="tabs-modern"><button class="actif">Tous les outils</button><button>Création de contenu</button><button>Évaluation</button><button>Collaboration</button><button>Classe virtuelle</button><button>Organisation</button><button>Accessibilité</button></div>
+  <div class="section-head"><h2>Catégories populaires</h2></div>
+  <div class="category-grid">
+    ${[['✎','Création de contenu','18 outils'],['✓','Évaluation','16 outils'],['♙','Collaboration','14 outils'],['▷','Classe virtuelle','12 outils'],['◷','Organisation','15 outils'],['☼','Accessibilité','10 outils']].map(c=>`<a class="category-tile" href="#"><span>${c[0]}</span><b>${c[1]}</b><small>${c[2]} · Diaporamas, quiz, documents...</small></a>`).join('')}
+  </div>
+  <div class="section-head" style="margin-top:24px"><h2>Outils recommandés</h2><a href="/ajouter-outil">Ajouter un outil</a></div>
+  <div class="tool-card-grid">
+    ${tools.map(t=>`<article class="tool-card"><span class="tool-logo">${t[3]}</span><h3>${t[0]}</h3><span class="pill">${t[1]}</span><p style="color:var(--texte-2);font-size:13px;margin:10px 0">${t[2]}</p><p class="stars">★★★★☆ <small>4.7</small></p><a class="btn btn-contour btn-bloc btn-petit" href="#">Utiliser</a></article>`).join('')}
+  </div>
+  <div class="section-head" style="margin-top:24px"><h2>Outils récents</h2></div>
+  <div class="teacher-table">
+    ${teacherRow('Q','Quizizz','Créez et assignez des quiz engageants.',['Évaluation'],['Évaluation','16/05/2024','★★★★★',''], 'Ouvrir')}
+    ${teacherRow('W','Wooclap','Questions en direct et sondages en classe.',['Évaluation'],['Évaluation','15/05/2024','★★★★★',''], 'Ouvrir')}
+    ${teacherRow('N','Nearpod','Présentez des leçons interactives.',['Création de contenu'],['Création','14/05/2024','★★★★☆',''], 'Ouvrir')}
+  </div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction('⌕','Rechercher un outil','Trouvez l’outil idéal','#')}
+    ${quickAction('+','Ajouter un outil','Proposez un outil','/ajouter-outil')}
+    ${quickAction('♡','Voir mes favoris','Accédez aux favoris','#')}
+    ${quickAction('▧','Consulter le guide','Guide d’utilisation','#')}
+  </div>
+  <div class="side-card"><h3>Mes favoris <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:'Canva Éducation',meta:'Création'},{titre:'Kahoot!',meta:'Évaluation'},{titre:'Google Classroom',meta:'Organisation'},{titre:'Padlet',meta:'Collaboration'},{titre:'YouTube Éducation',meta:'Création'}])}
+  </div>
+  <div class="side-card"><h3>Ressources d’aide</h3>
+    ${quickAction('▷','Tutoriels vidéo','Apprenez pas à pas','#')}
+    ${quickAction('▧','Fiches pratiques','Guides rapides à télécharger','#')}
+    ${quickAction('◉','Webinaires à venir','Formations en direct','#')}
+  </div>
+  <div class="side-card orange-callout"><h3>Conseil du jour</h3><p>Variez les outils pour maintenir l’engagement de vos élèves et favoriser l’apprentissage actif.</p></div>
+`;
+
+document.getElementById('app').innerHTML = appShell('outils-educatifs', contenu, droite, {
+  search: 'Rechercher un outil, une ressource, une activité...',
+  action: '<a class="btn btn-bleu btn-petit" href="/ajouter-outil">+ Ajouter un outil</a>'
+});
+</script>
+</body>
+</html>

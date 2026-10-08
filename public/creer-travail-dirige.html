@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Créer un travail dirigé - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:8px 0 18px">
+    <span class="row-icon" style="width:64px;height:64px;font-size:32px">▧</span>
+    <div><h1>Créer un travail dirigé</h1><p style="color:var(--texte-2)">Concevez des activités structurées pour accompagner vos élèves dans leurs apprentissages.</p></div>
+  </section>
+  ${wizardSteps(["Informations générales","Contenu & exercices","Pièces jointes","Paramètres","Publication"])}
+  <div class="builder-layout">
+    <section>
+      <div class="form-panel">
+        <h3>Informations générales</h3>
+        <div class="form-grid">
+          ${formField("Titre du TD *", "Ex. : Les équations du premier degré")}
+          <div class="champ"><label>Discipline *</label><select><option>Sélectionner une discipline</option><option>Mathématiques</option><option>Sciences physiques</option><option>Français</option></select></div>
+          <div class="champ"><label>Niveau scolaire *</label><select><option>Sélectionner un niveau</option><option>Secondaire 2</option><option>Secondaire 3</option><option>Secondaire 4</option></select></div>
+          ${formField("Chapitre / Thème", "Ex. : Chapitre 2 - Équations linéaires")}
+          <div class="champ"><label>Durée estimée</label><select><option>45 min</option><option>30 min</option><option>1 h</option></select></div>
+          <div class="champ"><label>Nombre d’exercices</label><select><option>10 exercices</option><option>5 exercices</option><option>15 exercices</option></select></div>
+        </div>
+        <h3 style="margin-top:12px">Objectifs d’apprentissage</h3>
+        <div class="toolbar-mini"><b>B</b><i>I</i><u>U</u><span>☰</span><span>▧</span><span>↗</span></div>
+        <div class="editor-box">Décrivez ce que les élèves doivent apprendre ou être capables de faire à la fin de ce TD...</div>
+        <h3 style="margin-top:18px">Consignes générales</h3>
+        <div class="toolbar-mini"><b>B</b><i>I</i><u>U</u><span>☰</span><span>▧</span><span>↗</span></div>
+        <div class="editor-box">Écrivez ici les consignes générales à suivre pour réaliser ce travail dirigé...</div>
+        <div class="footer-action"><a class="btn btn-contour" href="/travaux-diriges">Annuler</a><div><button class="btn btn-contour">Enregistrer le brouillon</button> <button class="btn btn-bleu">Suivant →</button></div></div>
+      </div>
+    </section>
+    <aside>
+      <div class="preview-card"><h3>Paramètres de publication</h3>
+        <div class="champ"><label>Visibilité</label><select><option>Privé (seulement moi)</option><option>Partager avec mes classes</option></select></div>
+        <div class="champ"><label>Date de publication</label><input placeholder="Sélectionner une date"></div>
+        <div class="champ"><label>Date limite (optionnel)</label><input placeholder="Sélectionner une date"></div>
+        <div class="toggle-row"><div><b>Autoriser la remise en ligne</b><br><small>Les élèves pourront remettre leur travail en ligne.</small></div><span class="toggle"></span></div>
+        <div class="champ"><label>Barème / Notation</label><select><option>Noté sur 20 points</option><option>Compétences</option></select></div>
+      </div>
+      <div class="preview-card soft-callout"><h3>Aperçu du TD</h3><p><b>Les équations du premier degré</b></p><p style="color:var(--texte-2)">Mathématiques · Secondaire 2<br>Durée estimée : 45 min · 10 exercices</p><p>Résoudre des équations du premier degré à une inconnue et vérifier les solutions.</p><a class="btn btn-contour btn-petit" href="#">Voir le détail complet</a></div>
+      <div class="preview-card orange-callout"><h3>Bon à savoir</h3><p>Vous pourrez ajouter les exercices, documents et ressources à l’étape suivante.</p></div>
+    </aside>
+  </div>
+`;
+
+document.getElementById("app").innerHTML = appShell("td", contenu, "", {
+  search: "Rechercher un TD, une matière, un thème...",
+  action: '<a class="btn btn-bleu btn-petit" href="#">Enregistrer le brouillon</a>'
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz en cours — OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur" style="max-width:820px">
+  <div class="ariane"><a href="/">Accueil</a> › <a href="/quiz">Quiz</a> › <span id="ariane-titre">Quiz</span></div>
+  <div class="panneau" style="margin-top:16px" id="zone"><div class="chargement">Chargement du quiz…</div></div>
+  <div style="height:40px"></div>
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('Formations');
+afficherPied();
+
+let quiz, reponses = [], index = 0, tempsRestant = 0, chrono = null;
+
+function fmtTemps(s) {
+  return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+}
+
+function demarrerChrono() {
+  const el = () => document.getElementById('chrono');
+  chrono = setInterval(() => {
+    tempsRestant--;
+    if (el()) {
+      el().textContent = '⏱ ' + fmtTemps(tempsRestant);
+      if (tempsRestant <= 30) el().classList.add('urgent');
+    }
+    if (tempsRestant <= 0) { clearInterval(chrono); soumettre(); }
+  }, 1000);
+}
+
+function afficherQuestion() {
+  const q = quiz.questions[index];
+  const lettres = ['A', 'B', 'C', 'D', 'E'];
+  document.getElementById('zone').innerHTML = `
+    <div class="quiz-entete">
+      <div>
+        <h1 style="font-size:20px">${quiz.titre}</h1>
+        <span class="question-num">Question ${index + 1} sur ${quiz.questions.length}</span>
+      </div>
+      <span class="chrono" id="chrono">⏱ ${fmtTemps(tempsRestant)}</span>
+    </div>
+    <div class="barre-progression"><div style="width:${(index) / quiz.questions.length * 100}%"></div></div>
+    <h2 style="font-size:18px;margin-bottom:16px">${q.q}</h2>
+    ${q.options.map((o, i) => `
+      <button class="option ${reponses[index] === i ? 'choisie' : ''}" onclick="choisir(${i})">
+        <span class="lettre">${lettres[i]}</span> ${o}
+      </button>`).join('')}
+    <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+      <button class="btn btn-contour" ${index === 0 ? 'disabled style="opacity:.4"' : ''} onclick="index--; afficherQuestion()">← Précédent</button>
+      ${index < quiz.questions.length - 1
+        ? '<button class="btn btn-bleu" onclick="index++; afficherQuestion()">Suivant →</button>'
+        : '<button class="btn btn-vert" onclick="soumettre()">✔ Terminer le quiz</button>'}
+      <span style="margin-left:auto;color:var(--texte-2);font-size:13px;align-self:center">${reponses.filter(r => r != null).length}/${quiz.questions.length} répondues</span>
+    </div>`;
+}
+
+function choisir(i) { reponses[index] = i; afficherQuestion(); }
+
+async function soumettre() {
+  clearInterval(chrono);
+  const res = await API.post('/api/quiz/' + quiz.id + '/soumettre', { reponses });
+  const couleur = res.pourcentage >= 70 ? 'var(--vert)' : res.pourcentage >= 40 ? 'var(--orange)' : 'var(--rouge)';
+  const message = res.pourcentage >= 70 ? 'Excellent travail ! 🎉' : res.pourcentage >= 40 ? 'Bon effort, continuez à réviser ! 💪' : 'Ne baissez pas les bras, révisez et réessayez ! 📖';
+  document.getElementById('zone').innerHTML = `
+    <div style="text-align:center">
+      <h1 style="font-size:22px">Résultats — ${quiz.titre}</h1>
+      <div class="score-cercle" style="background:${couleur}"><b>${res.pourcentage}%</b><span>${res.score}/${res.total}</span></div>
+      <p style="font-weight:600;margin-bottom:20px">${message}</p>
+    </div>
+    <h2 style="font-size:17px;margin:10px 0 14px">Correction détaillée</h2>
+    ${res.correction.map((c, i) => `
+      <div class="panneau" style="margin-bottom:12px;padding:15px">
+        <b>${i + 1}. ${c.question}</b>
+        <div class="option ${c.correct ? 'bonne' : 'mauvaise'}" style="margin-top:10px;cursor:default">
+          ${c.correct ? '✅' : '❌'} Votre réponse : ${c.votreReponse ?? '<i>aucune réponse</i>'}
+        </div>
+        ${!c.correct ? `<div class="option bonne" style="cursor:default">✅ Bonne réponse : ${c.bonneReponse}</div>` : ''}
+        <div class="explication">💡 ${c.explication}</div>
+      </div>`).join('')}
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+      <a class="btn btn-bleu" href="/quiz-jouer?id=${quiz.id}">↻ Recommencer</a>
+      <a class="btn btn-contour" href="/quiz">Autres quiz</a>
+      ${Auth.charger() ? '<a class="btn btn-contour" href="/dashboard">Voir mon historique</a>' : '<a class="btn btn-vert" href="/inscription">Créer un compte pour suivre ma progression</a>'}
+    </div>`;
+  window.scrollTo({ top: 0 });
+}
+
+(async () => {
+  quiz = await API.get('/api/quiz/' + param('id')).catch(() => null);
+  if (!quiz) {
+    document.getElementById('zone').innerHTML = '<div class="vide"><span class="emoji">🔎</span>Quiz introuvable.<br><a class="btn btn-bleu btn-petit" style="margin-top:12px" href="/quiz">← Retour aux quiz</a></div>';
+    return;
+  }
+  document.getElementById('ariane-titre').textContent = quiz.titre;
+  document.title = quiz.titre + ' — OASIS';
+  reponses = new Array(quiz.questions.length).fill(null);
+  tempsRestant = quiz.duree;
+  document.getElementById('zone').innerHTML = `
+    <div style="text-align:center;padding:20px 0">
+      <div style="font-size:52px">❓</div>
+      <h1 style="font-size:24px;margin:12px 0 6px">${quiz.titre}</h1>
+      <p style="color:var(--texte-2)">${quiz.matiere} • ${quiz.niveau} • ${quiz.questions.length} questions • ⏱ ${Math.round(quiz.duree / 60)} minutes</p>
+      <p style="color:var(--texte-2);margin:14px auto;max-width:460px">Le chronomètre démarre dès que vous cliquez. À la fin du temps, le quiz est soumis automatiquement. Bonne chance !</p>
+      <button class="btn btn-bleu" style="font-size:16px;padding:13px 28px" onclick="demarrerChrono(); afficherQuestion()">▶ Démarrer le quiz</button>
+    </div>`;
+})().catch(console.error);
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exposés enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const exposes = [
+  { icon: "◎", titre: "La mondialisation : enjeux et perspectives", meta: "Durée : 15 min · Type : Recherche · 28 élèves assignés", tags: ["Histoire-Géo", "Secondaire 4", "Publié"], dates: "Créé le 15/05/2024<br>Modifié le 20/05/2024" },
+  { icon: "▥", titre: "Le personnage de roman : étude de cas", meta: "Durée : 12 min · Type : Analyse littéraire · 32 élèves assignés", tags: ["Français", "Secondaire 3", "Publié"], dates: "Créé le 12/05/2024<br>Modifié le 18/05/2024" },
+  { icon: "π", titre: "Les fonctions linéaires et affines", meta: "Durée : 10 min · Type : Théorique · 0 élève assigné", tags: ["Mathématiques", "Secondaire 3", "Brouillon"], dates: "Créé le 10/05/2024<br>Modifié le 10/05/2024" },
+  { icon: "⚗", titre: "Les réactions chimiques en solution aqueuse", meta: "Durée : 18 min · Type : Expérimental · 24 élèves assignés", tags: ["Sciences", "Secondaire 4", "Publié"], dates: "Créé le 08/05/2024<br>Modifié le 12/05/2024" },
+  { icon: "Aa", titre: "The impact of social media on youth", meta: "Durée : 15 min · Type : Argumentatif · 19 élèves assignés", tags: ["Anglais", "Secondaire 4", "Publié"], dates: "Créé le 05/05/2024<br>Modifié le 09/05/2024" }
+];
+
+function ligneExpose(e) {
+  return `<article class="object-row">
+    <span class="object-check"></span><span class="object-icon">${e.icon}</span>
+    <div><b>${e.titre}</b><div>${e.tags.map(t => `<em class="pill">${t}</em>`).join(" ")}</div><p>${e.meta}</p></div>
+    <small class="object-meta">${e.dates}</small>
+    <div class="object-actions"><button title="Voir">⌕</button><button title="Modifier">✎</button><button title="Dupliquer">□</button><button title="Partager">⇄</button><button title="Plus">⋮</button></div>
+  </article>`;
+}
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Exposés - Enseignants</h1>
+    <p>Créez, organisez et partagez des sujets d’exposés pour développer les compétences de recherche, d’analyse et de présentation de vos élèves.</p>
+    <a class="btn btn-contour" href="/apropos" style="margin-top:6px">Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Tous les exposés</button><button>Par discipline</button><button>Par niveau</button><button>Mes exposés</button><button>Exposés partagés avec moi</button><button>Favoris</button></div>
+  <div class="category-scroll">
+    ${[["▥","Français","56 exposés"],["◎","Histoire-Géo","48 exposés"],["⚗","Sciences","62 exposés"],["π","Mathématiques","55 exposés"],["◉","SVT","41 exposés"],["Aa","Anglais","37 exposés"],["…","Autres disciplines","28 exposés"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+  <div class="filters-modern">
+    <select><option>Niveau scolaire : Tous</option></select><select><option>Discipline : Toutes</option></select><select><option>Type d’exposé : Tous</option></select><select><option>Durée : Toutes</option></select><input placeholder="Rechercher un exposé..."><button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>327 exposés trouvés</h2><a href="#">Trier par : Plus récents</a></div>
+  <div class="object-list">${exposes.map(ligneExpose).join("")}</div>
+  <div class="pagination"><button>‹</button><button class="actif">1</button><button>2</button><button>3</button><button>4</button><span>…</span><button>17</button><button>›</button></div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction("+", "Créer un nouvel exposé", "Commencer un exposé à partir de zéro", "#")}
+    ${quickAction("⇧", "Importer un exposé", "Importer depuis Word, PDF ou fichier", "#")}
+    ${quickAction("□", "Dupliquer un exposé existant", "Gagner du temps avec un modèle", "#")}
+    ${quickAction("⇄", "Partager une collection", "Partager plusieurs exposés à la fois", "#")}
+  </div>
+  <div class="side-card"><h3>Mes collections <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:"Exposés Histoire-Géo", meta:"14"},{titre:"Exposés Français", meta:"11"},{titre:"Exposés Sciences", meta:"10"},{titre:"Exposés Mathématiques", meta:"9"},{titre:"Exposés Anglais", meta:"7"}])}
+  </div>
+  <div class="side-card"><h3>Statistiques <a href="#">Voir le rapport</a></h3><div class="stat-line"><span><b>327</b><small>Créés</small></span><span><b>86</b><small>Partagés</small></span><span><b>1 245</b><small>Utilisations</small></span><span><b>92%</b><small>Engagement</small></span></div><div class="line-chart"></div></div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Variez les sujets d’exposés pour développer la recherche, l’expression orale et la pensée critique.</p></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("exposes", contenu, droite, {
+  search: "Rechercher un exposé, une matière, un thème...",
+  action: '<a class="btn btn-bleu btn-petit" href="#">+ Créer un exposé</a>'
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nouvelle dissertation - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:8px 0 18px">
+    <span class="row-icon" style="width:64px;height:64px;font-size:32px">✎</span>
+    <div><h1>Nouvelle dissertation</h1><p style="color:var(--texte-2)">Créez un nouveau sujet pour développer la pensée critique et l’expression écrite de vos élèves.</p></div>
+  </section>
+  ${wizardSteps(['Informations générales','Sujet et consignes','Barème et critères','Paramètres','Publication'])}
+  <div class="builder-layout">
+    <section>
+      <div class="form-panel">
+        <h3>Informations générales</h3>
+        ${formField('Titre de la dissertation *','Ex. : La mondialisation : opportunités ou menaces pour les pays en développement ?')}
+        <div class="form-grid">
+          <div class="champ"><label>Discipline *</label><select><option>Sélectionner une discipline</option><option>Français</option><option>Histoire-Géo</option><option>Philosophie</option></select></div>
+          <div class="champ"><label>Niveau scolaire *</label><select><option>Sélectionner un niveau</option><option>Secondaire 3</option><option>Secondaire 4</option><option>Secondaire 5</option></select></div>
+          <div class="champ"><label>Type de dissertation *</label><select><option>Sélectionner le type</option><option>Argumentative</option><option>Explicative</option><option>Critique</option></select></div>
+          <div class="champ"><label>Durée recommandée</label><select><option>2 h 00 min</option><option>1 h 30 min</option><option>3 h 00 min</option></select></div>
+        </div>
+        <div class="hero-chips" style="margin:12px 0"><span style="background:var(--bleu);color:#fff">Argumenter</span><span>Analyser</span><span>Synthétiser</span></div>
+        ${formField('Mots-clés','Ex. : mondialisation, économie, développement...')}
+      </div>
+      <div class="form-panel">
+        <h3>Résumé / Contexte</h3>
+        <div class="toolbar-mini"><b>B</b><i>I</i><u>U</u><span>☰</span><span>▧</span><span>↗</span></div>
+        <div class="editor-box">Fournissez un contexte ou des éléments d’introduction utiles pour les élèves...</div>
+        <div class="footer-action"><a class="btn btn-contour" href="/dashboard">Annuler</a><button class="btn btn-bleu">Suivant →</button></div>
+      </div>
+    </section>
+    <aside>
+      <div class="preview-card"><h3>Paramètres de publication</h3>
+        <div class="champ"><label>Visibilité</label><select><option>Privé (seulement moi)</option><option>Partager avec mes classes</option></select></div>
+        <div class="toggle-row"><div><b>Autoriser la remise en ligne</b><br><small>Les élèves pourront soumettre plus d’une fois.</small></div><span class="toggle"></span></div>
+        <div class="toggle-row"><div><b>Afficher la correction aux élèves</b><br><small>Après évaluation.</small></div><span class="toggle"></span></div>
+      </div>
+      <div class="preview-card soft-callout"><h3>Aperçu rapide</h3><p><b>Titre de la dissertation</b> <span class="pill purple">Brouillon</span></p><p style="color:var(--texte-2)">Discipline : -<br>Niveau : -<br>Durée : 2 h 00 min</p><a class="btn btn-contour btn-petit" href="#">Voir l’aperçu complet</a></div>
+      <div class="preview-card orange-callout"><h3>Bon à savoir</h3><p>Vous pourrez enregistrer la dissertation en brouillon et la publier plus tard quand vous le souhaitez.</p></div>
+    </aside>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('dissertations', contenu, '', {
+  search: 'Rechercher une dissertation, un sujet, une notion...',
+  action: '<a class="btn btn-bleu btn-petit" href="/nouvelle-dissertation">+ Créer une dissertation</a>'
+});
+</script>
+</body>
+</html>

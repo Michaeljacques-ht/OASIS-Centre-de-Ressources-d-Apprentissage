@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ressources multimédia - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const medias = [
+  ['▷', 'Les mouvements de la Terre', 'Sciences · NS3', '08:45', 'Vidéo'],
+  ['♬', 'Le discours argumentatif', 'Français · NS3', '06:12', 'Audio'],
+  ['◇', 'La structure de l’ADN', 'Sciences · NS3', '05:30', 'Animation'],
+  ['▧', 'Les civilisations de l’Égypte antique', 'Histoire · NS3', '15:20', 'Documentaire'],
+  ['▷', 'Résolution d’équations du 1er degré', 'Mathématiques · NS2', '07:15', 'Vidéo'],
+  ['♬', 'Orientation scolaire : trouver sa voie', 'Vie scolaire', '12:45', 'Podcast'],
+  ['◇', 'La photosynthèse expliquée', 'Sciences · NS3', '04:18', 'Animation'],
+  ['◉', 'Bien réviser pour un examen', 'Méthodologie', '45:30', 'Webinaire']
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Ressources multimédia</h1>
+    <p>Apprends autrement avec des vidéos, audios, animations, podcasts et documentaires adaptés à ton niveau.</p>
+    <div class="hero-chips"><span>Vidéos</span><span>Audios</span><span>Animations</span><span>Podcasts</span><span>Documentaires</span></div>
+  </section>
+  <div class="dash-stats">
+    ${statCard('▷', '245', 'Vidéos')}
+    ${statCard('♬', '86', 'Audios', 'green')}
+    ${statCard('◇', '64', 'Animations', 'orange')}
+    ${statCard('◉', '38', 'Podcasts', 'purple')}
+    ${statCard('▦', '498', 'Tous les médias', 'pink')}
+  </div>
+  <div class="filters-modern">
+    <select><option>Niveau : Tous</option><option>Primaire</option><option>Secondaire</option></select>
+    <select><option>Discipline : Toutes</option><option>Sciences</option><option>Français</option><option>Histoire</option></select>
+    <select><option>Type : Tous</option><option>Vidéo</option><option>Audio</option><option>Animation</option></select>
+    <input placeholder="Rechercher dans les ressources multimédia...">
+    <button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>Ressources multimédia</h2><a href="/catalogue?type=video">Voir tout</a></div>
+  <div class="media-grid">
+    ${medias.map(m => `<article class="media-card">
+      <div class="media-thumb"><span>${m[0]}</span><small>${m[3]}</small></div>
+      <div><small class="tag-type">${m[4]}</small><b>${m[1]}</b><small>${m[2]}</small></div>
+    </article>`).join('')}
+  </div>
+`;
+
+const droite = `
+  <div class="side-card">
+    <h3>Accès rapide</h3>
+    ${quickAction('♥', 'Mes ressources favorites', 'Médias enregistrés', '/dashboard')}
+    ${quickAction('◷', 'Historique de visionnage', 'Continuer là où tu t’es arrêté', '/dashboard')}
+    ${quickAction('⇩', 'Téléchargements', 'Médias hors ligne', '/dashboard')}
+    ${quickAction('▤', 'Ma playlist', 'Sélections d’apprentissage', '/dashboard')}
+  </div>
+  <div class="side-card">
+    <h3>Ressources à la une <a href="/catalogue?type=video">Voir tout</a></h3>
+    ${featuredList([
+      { titre: 'Le système solaire', meta: '3.3K vues' },
+      { titre: 'L’importance de la lecture', meta: '1.7K vues' },
+      { titre: 'Les écosystèmes de montagne', meta: '1.2K vues' }
+    ])}
+  </div>
+  <div class="side-card soft-callout">
+    <h3>Suggestion pour toi</h3>
+    <p>Découvre des contenus adaptés à ton niveau et à tes centres d’intérêt.</p>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('multimedia', contenu, droite, {
+  search: 'Rechercher une vidéo, un audio, une animation, un podcast...'
+});
+</script>
+</body>
+</html>

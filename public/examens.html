@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examens enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const examens = [
+  ['◎','Examen de fin de chapitre : La mondialisation','30 questions',['Secondaire 4'],['Secondaire 4','Histoire-Géo','Sommatif · 90 min','Planifié']],
+  ['⚗','Évaluation trimestrielle : Réactions chimiques','25 questions',['Secondaire 5'],['Secondaire 5','Sciences','Sommatif · 80 min','En correction']],
+  ['π','Contrôle continu : Fonctions linéaires','20 questions',['Secondaire 3'],['Secondaire 3','Mathématiques','Formatif · 45 min','Terminé']],
+  ['▥','Examen blanc : Dissertation argumentative','1 sujet',['Secondaire 4'],['Secondaire 4','Français','Sommatif · 120 min','Terminé']],
+  ['⌘','Épreuve pratique : Tableur Excel','5 exercices',['Secondaire 4'],['Secondaire 4','Informatique','Pratique · 60 min','Brouillon']],
+  ['◉','Test de connaissances : La photosynthèse','15 questions',['Secondaire 2'],['Secondaire 2','SVT','Formatif · 30 min','Planifié']]
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Examens - Enseignants</h1>
+    <p>Créez, organisez et évaluez des examens en ligne ou en classe. Suivez les résultats et analysez les performances des élèves.</p>
+    <a class="btn btn-contour" href="#" style="margin-top:6px">Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Tous les examens</button><button>Par discipline</button><button>Par niveau</button><button>Mes examens</button><button>Partagés avec moi</button><button>Favoris</button></div>
+  <div class="dash-stats">
+    ${statCard('▧','24','Examens créés')}
+    ${statCard('✎','8','En brouillon','purple')}
+    ${statCard('◷','12','Planifiés','green')}
+    ${statCard('▤','3','En correction','orange')}
+    ${statCard('A+','1 245','Copies corrigées','pink')}
+    ${statCard('✓','84%','Taux de réussite moyen')}
+  </div>
+  <div class="filters-modern"><select><option>Niveau scolaire : Tous</option></select><select><option>Discipline : Toutes</option></select><select><option>Type d’examen : Tous</option></select><select><option>Statut : Tous</option></select><input placeholder="Rechercher un examen..."><button class="btn btn-contour">Filtres</button></div>
+  <div class="section-head"><h2>24 examens trouvés</h2><a href="#">Trier par : Plus récents</a></div>
+  <div class="teacher-table">${examens.map(e => teacherRow(e[0], e[1], e[2], e[3], e[4], 'Voir')).join('')}</div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction('+','Créer un nouvel examen','Commencer à partir de zéro','#')}
+    ${quickAction('⇧','Importer un examen','Importer Word, PDF ou fichier','#')}
+    ${quickAction('□','Dupliquer un examen','Gagner du temps avec un modèle','#')}
+    ${quickAction('⇄','Partager une collection','Partager plusieurs examens','#')}
+  </div>
+  <div class="side-card"><h3>Mes collections <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:'Examens Histoire-Géo',meta:'6'},{titre:'Examens Mathématiques',meta:'5'},{titre:'Examens Sciences',meta:'4'},{titre:'Examens Français',meta:'4'},{titre:'Examens Informatique',meta:'3'}])}
+  </div>
+  <div class="side-card"><h3>Statistiques <a href="#">Voir le rapport</a></h3><div class="line-chart"></div><p style="color:var(--texte-2);font-size:13px">24 examens créés · 1 245 copies corrigées · 84% de réussite</p></div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Variez les types d’évaluation pour mesurer différents aspects des compétences de vos élèves.</p></div>
+`;
+
+document.getElementById('app').innerHTML = appShell('examens', contenu, droite, {
+  search: 'Rechercher un examen, une matière, un niveau...',
+  action: '<a class="btn btn-bleu btn-petit" href="#">+ Créer un examen</a>'
+});
+</script>
+</body>
+</html>
