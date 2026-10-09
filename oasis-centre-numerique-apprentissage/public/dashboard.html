@@ -21,9 +21,7 @@ const onglets = {
   enseignant: [['progression', 'Progression'], ['publier', 'Publier une ressource'], ['creer-quiz', 'Créer un quiz'], ['favoris', 'Favoris']],
   admin: [['progression', 'Statistiques'], ['utilisateurs', 'Utilisateurs'], ['ressources', 'Ressources'], ['publier', 'Publier']]
 };
-const ongletsRole = onglets[user.role] || onglets.apprenant;
-const tabDemande = param('tab');
-let actif = ongletsRole.some(([id]) => id === tabDemande) ? tabDemande : ongletsRole[0][0];
+let actif = (onglets[user.role] || onglets.apprenant)[0][0];
 
 const contenu = `
   <section class="dash-hero">
@@ -36,31 +34,13 @@ const contenu = `
   <section id="zone"><div class="chargement">Chargement...</div></section>
 `;
 
-const actionsParRole = {
-  apprenant: [
-    ['▥', 'Bibliothèque numérique', 'Explorer les ressources', '/ressources'],
-    ['✓', 'Quiz et évaluations', 'Tester mes connaissances', '/quiz'],
-    ['▦', 'Ressources élèves', 'Cours, exercices et activités', '/ressources-pedagogiques-eleves'],
-    ['✦', 'Méthodes d’étude', 'Réviser et mieux apprendre', '/methodologie']
-  ],
-  enseignant: [
-    ['▤', 'Ressources enseignants', 'Préparer mes cours', '/ressources-pedagogiques-enseignant'],
-    ['⇄', 'Partage de ressources', 'Publier et réutiliser', '/partage'],
-    ['?', 'Banque de questions', 'Créer des évaluations', '/banque-questions'],
-    ['⚗', 'Laboratoire virtuel', 'Créer des expériences', '/laboratoire']
-  ],
-  admin: [
-    ['▥', 'Bibliothèque numérique', 'Explorer toutes les ressources', '/ressources'],
-    ['▤', 'Espace enseignants', 'Gérer les ressources', '/ressources-pedagogiques-enseignant'],
-    ['▦', 'Espace élèves', 'Voir l’expérience apprenant', '/ressources-pedagogiques-eleves'],
-    ['♙', 'Administration', 'Utilisateurs et contenus', '/dashboard']
-  ]
-};
-
 const droite = `
   <div class="side-card">
     <h3>Accès rapide</h3>
-    ${(actionsParRole[user.role] || actionsParRole.apprenant).map(a => quickAction(...a)).join('')}
+    ${quickAction('▥', 'Bibliothèque numérique', 'Explorer les ressources', '/ressources')}
+    ${quickAction('▷', 'Ressources multimédia', 'Vidéos et podcasts', '/multimedia')}
+    ${quickAction('⇄', 'Partage de ressources', 'Publier et réutiliser', '/partage')}
+    ${quickAction('♙', 'Groupes', 'Collaborer', '/groupes')}
   </div>
   <div class="side-card soft-callout">
     <h3>Conseil OASIS</h3>

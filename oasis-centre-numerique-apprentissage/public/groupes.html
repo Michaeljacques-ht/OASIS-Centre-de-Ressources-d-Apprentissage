@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Groupes - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const groupes = [
+  ['⚗', 'Sciences secondaires - NS4', 'Échange de ressources et d’activités pour les cours de sciences NS4.', ['Groupe de classe'], 'Aujourd’hui'],
+  ['√x', 'Mathématiques - Profs du secondaire', 'Partage d’outils, d’exercices et de stratégies d’enseignement.', ['Groupe collaboratif'], 'Hier'],
+  ['◎', 'Histoire-Géographie 3e cycle', 'Groupe de discussion, ressources et projets pour le 3e cycle.', ['Groupe de classe'], 'Hier'],
+  ['▥', 'Pédagogie et pratiques d’enseignement', 'Idées, méthodes et bonnes pratiques pour améliorer nos enseignements.', ['Groupe personnel'], '15/05/2024'],
+  ['⌘', 'Intégration des TIC en classe', 'Partage d’expériences sur l’intégration des TIC dans l’enseignement.', ['Groupe collaboratif'], '14/05/2024']
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Groupes</h1>
+    <p>Créez, gérez et collaborez avec vos collègues ou vos classes dans des espaces de travail collaboratifs.</p>
+    <a class="btn btn-contour" href="#" style="margin-top:6px">En savoir plus</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Tous mes groupes (12)</button><button>Groupes de classes (7)</button><button>Groupes personnels (3)</button><button>Groupes collaboratifs (2)</button><button>Archivés (0)</button></div>
+  <div class="dash-stats">
+    ${statCard('♙', '12', 'Groupes au total')}
+    ${statCard('♙', '156', 'Membres au total', 'green')}
+    ${statCard('♙', '8', 'Groupes actifs', 'purple')}
+    ${statCard('♙', '24', 'Publications cette semaine', 'orange')}
+  </div>
+  <div class="filters-modern" style="grid-template-columns:minmax(220px,1fr) auto minmax(180px,280px)">
+    <input placeholder="Rechercher dans mes groupes...">
+    <button class="btn btn-contour">Filtres</button>
+    <select><option>Trier par : Plus récents</option><option>Plus actifs</option></select>
+  </div>
+  <div class="resource-list">
+    ${groupes.map(g => resourceRow(g[0], g[1], g[2], g[3], g[4])).join('')}
+  </div>
+`;
+
+const droite = `
+  <div class="side-card">
+    <h3>Actions rapides</h3>
+    ${quickAction('+', 'Créer un groupe', 'Démarrer un nouvel espace', '#')}
+    ${quickAction('◌', 'Rejoindre un groupe', 'Avec un code ou un lien', '#')}
+    ${quickAction('♙', 'Inviter des membres', 'Ajouter collègues ou élèves', '#')}
+    ${quickAction('✉', 'Mes invitations', 'Demandes reçues', '#')}
+  </div>
+  <div class="side-card">
+    <h3>Mes groupes en un coup d’œil</h3>
+    ${featuredList([
+      { titre: 'Groupes de classes', meta: '7' },
+      { titre: 'Groupes collaboratifs', meta: '2' },
+      { titre: 'Groupes personnels', meta: '3' },
+      { titre: 'Membres actifs', meta: '156' }
+    ])}
+  </div>
+  <div class="side-card soft-callout">
+    <h3>Collaborez efficacement</h3>
+    <p>Les groupes vous permettent de partager des ressources, discuter et mener des projets avec vos collègues et élèves.</p>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('groupes', contenu, droite, {
+  search: 'Rechercher un groupe, une classe ou un sujet...',
+  action: '<a class="btn btn-bleu btn-petit" href="#">+ Créer un groupe</a>'
+});
+</script>
+</body>
+</html>

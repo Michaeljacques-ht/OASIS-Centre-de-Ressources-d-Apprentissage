@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratoire virtuel - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const labs = [
+  ['⚖', 'Mouvement pendulaire', 'Étudiez les lois du pendule simple et l’influence de la longueur et de la masse.', ['Physique', 'Secondaire 4'], ['Physique', 'Simulation interactive', '20 min', 'Accès libre']],
+  ['⚗', 'Réactions acide-base', 'Explorez les réactions acide-base et le calcul du pH.', ['Chimie', 'Secondaire 5'], ['Chimie', 'Expérience guidée', '25 min', 'Accès libre']],
+  ['◉', 'La cellule animale', 'Explorez la structure et les fonctions des organites d’une cellule animale.', ['Biologie', 'Secondaire 3'], ['Biologie', 'Simulation 3D', '15 min', 'Accès libre']],
+  ['∑', 'Fonctions quadratiques', 'Visualisez et manipulez les paramètres d’une fonction quadratique.', ['Mathématiques'], ['Mathématiques', 'Simulation interactive', '18 min', 'Accès libre']],
+  ['◎', 'Les couches de la Terre', 'Découvrez la structure interne de la Terre et ses caractéristiques.', ['Sciences de la terre'], ['Sciences de la terre', 'Exploration 3D', '20 min', 'Accès libre']]
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Laboratoire virtuel</h1>
+    <p>Explorez des simulations interactives et réalistes pour illustrer les concepts scientifiques et techniques en toute sécurité.</p>
+    <a class="btn btn-contour" href="/apropos" style="margin-top:6px">Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Tous les laboratoires</button><button>Par discipline</button><button>Par niveau</button><button>Mes laboratoires</button><button>Partagés avec moi</button><button>Favoris</button></div>
+  <div class="dash-stats">
+    ${statCard('⚗', '132', 'Laboratoires disponibles')}
+    ${statCard('▷', '48', 'Simulations interactives', 'purple')}
+    ${statCard('⚗', '36', 'Expériences guidées', 'green')}
+    ${statCard('♙', '24', 'Partagés avec moi', 'orange')}
+    ${statCard('★', '18', 'Mes favoris', 'pink')}
+    ${statCard('▥', '92%', 'Taux de satisfaction')}
+  </div>
+  <div class="section-head"><h2>Catégories populaires</h2></div>
+  <div class="category-scroll">
+    ${[['⚛','Physique','28'],['⚗','Chimie','27'],['◉','Biologie','22'],['∑','Mathématiques','18'],['◎','Sciences de la terre','12'],['⌘','Technologie','10']].map(c=>`<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]} labs</small></div></a>`).join('')}
+  </div>
+  <div class="filters-modern">
+    <select><option>Niveau scolaire : Tous</option></select><select><option>Discipline : Toutes</option></select><select><option>Type : Tous</option></select><select><option>Accès : Tous</option></select><input placeholder="Rechercher un laboratoire..."><button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>Laboratoires disponibles (132)</h2><a href="/nouveau-laboratoire">Créer un laboratoire</a></div>
+  <div class="teacher-table">${labs.map(l => teacherRow(l[0], l[1], l[2], l[3], l[4], 'Lancer')).join('')}</div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction('⌕','Rechercher un laboratoire','Trouver une simulation','#')}
+    ${quickAction('+','Nouveau laboratoire','Proposez un laboratoire','/nouveau-laboratoire')}
+    ${quickAction('⇧','Importer un laboratoire','Importer un fichier .lab ou .html','#')}
+    ${quickAction('⚗','Voir mes laboratoires','Accédez à vos créations','/simulations')}
+  </div>
+  <div class="side-card"><h3>Mes laboratoires <a href="/simulations">Voir tout</a></h3>
+    ${featuredList([{titre:'Mes simulations',meta:'16'},{titre:'Mes expériences guidées',meta:'12'},{titre:'Brouillons',meta:'4'},{titre:'Partagés avec mes classes',meta:'8'}])}
+  </div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Intégrez les laboratoires virtuels dans vos cours pour favoriser l’apprentissage actif et la compréhension des concepts abstraits.</p></div>
+`;
+
+document.getElementById('app').innerHTML = appShell('laboratoire', contenu, droite, {
+  search: 'Rechercher un laboratoire, une simulation, une expérience...',
+  action: '<a class="btn btn-bleu btn-petit" href="/nouveau-laboratoire">+ Nouveau laboratoire</a>'
+});
+</script>
+</body>
+</html>

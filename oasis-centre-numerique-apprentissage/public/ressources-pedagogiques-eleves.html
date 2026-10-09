@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ressources pédagogiques élèves - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const reco = [
+  ["VIDÉO", "La cellule végétale", "Sciences · Secondaire 2", "12.4k vues", "4.8 (124)", "◉", "green"],
+  ["ACTIVITÉ", "Les fractions - Fiche d’activité", "Mathématiques · Secondaire 2", "8.7k vues", "4.7 (98)", "÷", "warm"],
+  ["PRÉSENTATION", "L’Égypte ancienne", "Histoire · Secondaire 2", "6.1k vues", "4.9 (76)", "▥", "navy"],
+  ["QUIZ", "Quiz - Les accords du participe passé", "Français · Secondaire 2", "9.3k tentatives", "4.6 (112)", "✓", "purple"]
+];
+const nouveautes = [
+  ["ACTIVITÉ", "Les types de phrases", "Français · Secondaire 2", "▤", "purple"],
+  ["VIDÉO", "La respiration humaine", "Sciences · Secondaire 2", "▷", "green"],
+  ["DOCUMENT", "Résumé - La Révolution française", "Histoire · Secondaire 2", "▧", ""],
+  ["EXERCICE", "Équations du 1er degré", "Mathématiques · Secondaire 2", "÷", "warm"]
+];
+
+function carteEleve(r) {
+  return `<article class="edu-resource-card">
+    <div class="edu-thumb ${r[6]}" data-icon="${r[5]}"><span class="edu-label">${r[0]}</span><button class="edu-bookmark">♡</button></div>
+    <div class="edu-card-body"><b>${r[1]}</b><p>${r[2]}</p><div class="edu-card-meta"><span>⌕ ${r[3]}</span><span class="stars">★ ${r[4]}</span></div></div>
+  </article>`;
+}
+
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:10px 0 22px">
+    <span class="row-icon" style="width:58px;height:58px;font-size:30px">▥</span>
+    <div><h1>Ressources pédagogiques - Pour les élèves</h1><p style="color:var(--texte-2)">Explore, apprends et réussis avec des ressources adaptées à ton niveau.</p></div>
+  </section>
+  <div class="category-scroll">
+    ${[["▦","Toutes",""],["▥","Français",""],["▦","Mathématiques",""],["⚗","Sciences",""],["▥","Histoire",""],["◎","Géographie",""],["A","Anglais",""],["♙","Éducation civique",""],["…","Plus",""]].map((c, i) => `<a class="mini-category ${i === 0 ? "actif" : ""}" href="#"><span>${c[0]}</span><div><b>${c[1]}</b></div></a>`).join("")}
+  </div>
+  <div class="filters-modern"><select><option>Niveau scolaire : Secondaire 2</option></select><select><option>Type de ressource : Tous</option></select><select><option>Format : Tous</option></select><select><option>Tri : Plus récents</option></select><input placeholder="Rechercher une ressource..."><button class="btn btn-contour">Filtres</button></div>
+  <div class="section-head"><h2>Ressources recommandées pour toi</h2><a href="#">Voir tout →</a></div>
+  <div class="resource-card-grid">${reco.map(carteEleve).join("")}</div>
+  <div class="section-head" style="margin-top:28px"><h2>Parcours d’apprentissage</h2><a href="#">Voir tout →</a></div>
+  <div class="learning-track-grid">
+    <a class="learning-card" href="#"><b>Réviser les bases</b><small>Cours et exercices<br>12 ressources</small><div class="progress"><span style="--p:0%"></span></div></a>
+    <a class="learning-card" href="#"><b>S’entraîner</b><small>Exercices interactifs<br>18 ressources</small><div class="progress"><span style="--p:25%"></span></div></a>
+    <a class="learning-card" href="#"><b>Approfondir</b><small>Leçons et activités<br>14 ressources</small><div class="progress"><span style="--p:50%"></span></div></a>
+    <a class="learning-card" href="#"><b>S’évaluer</b><small>Quiz et examens<br>10 ressources</small><div class="progress"><span style="--p:10%"></span></div></a>
+  </div>
+  <div class="section-head" style="margin-top:28px"><h2>Nouveautés</h2><a href="#">Voir tout →</a></div>
+  <div class="small-resource-list">${nouveautes.map(n => `<a class="small-resource" href="#"><span class="mini-img">${n[3]}</span><div><b>${n[1]}</b><small>${n[2]}</small><br><em class="pill green">Nouveau</em></div><span>›</span></a>`).join("")}</div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Mes favoris <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:"La photosynthèse",meta:"Sciences · Secondaire 2"},{titre:"Les fonctions linéaires",meta:"Mathématiques · Secondaire 2"},{titre:"Géographie de l’Afrique",meta:"Géographie · Secondaire 2"}])}
+    <a class="btn btn-contour btn-bloc btn-petit" href="/dashboard">Voir tous mes favoris</a>
+  </div>
+  <div class="side-card green-callout"><h3>Continue ton apprentissage</h3><div class="progress-ring"><span>60%</span></div><p><b>Les volcans</b><br><small>Sciences · Secondaire 2</small></p><a class="btn btn-vert btn-petit" href="#">Continuer</a></div>
+  <div class="side-card"><h3>Ressources populaires <a href="#">Voir tout</a></h3>${featuredList([{titre:"Fiche d’activité - Le climat",meta:"15.2k"},{titre:"Quiz - Les figures de style",meta:"12.8k"},{titre:"Exercices corrigés - Fractions",meta:"11.3k"},{titre:"Carte de l’Afrique",meta:"9.7k"},{titre:"Vidéo - Le système solaire",meta:"8.9k"}])}</div>
+  <div class="side-card soft-callout"><h3>Besoin d’aide ?</h3><p>Pose ta question à ton enseignant ou à la communauté.</p><a class="btn btn-contour btn-petit" href="/forum">Poser une question</a></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("eleves", contenu, droite, {
+  search: "Rechercher une ressource, une leçon, une activité...",
+  action: '<a class="btn btn-contour btn-petit" href="/dashboard">Espace de travail</a>'
+});
+</script>
+</body>
+</html>

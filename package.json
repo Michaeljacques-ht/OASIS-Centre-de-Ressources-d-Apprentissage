@@ -1,0 +1,15 @@
+{
+  "name": "oasis-centre-numerique-apprentissage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OASIS Centre numérique d'apprentissage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "bash test.sh"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}

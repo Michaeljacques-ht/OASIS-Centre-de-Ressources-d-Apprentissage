@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outils & Logiciels de cours — OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur">
+  <div class="ariane"><a href="/">Accueil</a> › Outils & Logiciels de cours</div>
+
+  <div class="bandeau">
+    <div class="bandeau-titre">
+      <h1><span class="pastille-icone">🧰</span> Outils & Logiciels de cours</h1>
+      <p>Découvrez des outils et logiciels pédagogiques pour enseigner, apprendre et améliorer vos cours au quotidien.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="disposition">
+    <aside>
+      <div class="panneau">
+        <h3>Catégories d'outils</h3>
+        <div class="liste-cat" id="filtre-cat"></div>
+        <div class="filtre-groupe">
+          <h3>Type d'outil</h3>
+          <div id="filtre-licence"></div>
+        </div>
+        <button class="btn btn-contour btn-bloc btn-petit" style="margin-top:14px" onclick="etat={cat:'',lic:''}; charger()">⟳ Réinitialiser les filtres</button>
+      </div>
+      <div class="panneau">
+        <h3>Proposez un outil 💡</h3>
+        <p style="font-size:13px;color:var(--texte-2);margin-bottom:12px">Vous connaissez un excellent outil pédagogique ? Partagez-le avec notre communauté !</p>
+        <a href="/dashboard" class="btn btn-contour btn-bloc btn-petit">Devenir contributeur</a>
+      </div>
+    </aside>
+
+    <section>
+      <div class="grille" id="grille"><div class="chargement">Chargement…</div></div>
+      <div class="cta" style="margin-top:24px">
+        <div style="font-size:40px">🖥️</div>
+        <div><h2>Des outils puissants pour des cours plus efficaces !</h2>
+        <p>Gagnez du temps, engagez vos apprenants et améliorez vos résultats grâce aux meilleurs outils pédagogiques du moment.</p></div>
+        <a href="/inscription" class="btn btn-bleu">Découvrir tous les outils →</a>
+      </div>
+    </section>
+  </div>
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('Ressources');
+afficherPied();
+
+let etat = { cat: '', lic: '' };
+let tousOutils = [];
+
+function carteOutil(o) {
+  const etiquette = o.populaire ? '<span class="etiquette" style="position:static;background:var(--bleu)">POPULAIRE</span>'
+    : o.nouveau ? '<span class="etiquette nouveau" style="position:static">NOUVEAU</span>' : '';
+  return `<article class="carte"><div class="carte-corps" style="align-items:center;text-align:center;gap:8px">
+    <div style="align-self:flex-start;height:20px">${etiquette}</div>
+    <div style="font-size:44px">${['🟦','🟩','🎨','📐','🎮','🎥','🗒️','🎓','❓','📊','🐱','✈️'][tousOutils.indexOf(o) % 12]}</div>
+    <b class="titre">${o.nom}</b>
+    <p class="meta">${o.description}</p>
+    <div class="ligne-stats" style="width:100%">
+      <span class="tag-type">${o.licence}</span>
+      <span class="etoile">★ ${o.note}</span>
+    </div>
+    <button class="btn btn-contour btn-bloc btn-petit" onclick="alert('Fiche détaillée de « ${o.nom.replace(/'/g, "\\'")} » — à relier au site officiel de l’outil.')">Voir l'outil</button>
+  </div></article>`;
+}
+
+function charger() {
+  let list = tousOutils;
+  if (etat.cat) list = list.filter(o => o.categorie === etat.cat);
+  if (etat.lic) list = list.filter(o => o.licence === etat.lic);
+  document.getElementById('grille').innerHTML = list.length
+    ? list.map(carteOutil).join('')
+    : '<div class="vide"><span class="emoji">🧰</span>Aucun outil pour ces filtres.</div>';
+}
+
+(async () => {
+  const res = await API.get('/api/outils');
+  tousOutils = res.items;
+
+  const parCat = {}, parLic = {};
+  tousOutils.forEach(o => {
+    parCat[o.categorie] = (parCat[o.categorie] || 0) + 1;
+    parLic[o.licence] = (parLic[o.licence] || 0) + 1;
+  });
+
+  document.getElementById('stats').innerHTML = [
+    ['🧰', 'ic-bleu', tousOutils.length + '+', 'Outils disponibles'],
+    ['🗂️', 'ic-vert', Object.keys(parCat).length, 'Catégories'],
+    ['⬇️', 'ic-violet', fmtNombre(tousOutils.reduce((s, o) => s + o.telechargements, 0)) + '+', 'Téléchargements'],
+    ['⭐', 'ic-rose', '4.7/5', 'Note moyenne']
+  ].map(([e, c, v, l]) => `<div class="stat"><div class="ic ${c}">${e}</div><div><b>${v}</b><small>${l}</small></div></div>`).join('');
+
+  document.getElementById('filtre-cat').innerHTML =
+    `<a href="javascript:void(0)" class="actif" onclick="etat.cat=''; charger()">▦ Toutes les catégories <span class="n">${tousOutils.length}</span></a>` +
+    Object.entries(parCat).map(([c, n]) =>
+      `<a href="javascript:void(0)" onclick="etat.cat='${c.replace(/'/g, "\\'")}'; charger()">${c} <span class="n">${n}</span></a>`).join('');
+
+  document.getElementById('filtre-licence').innerHTML =
+    Object.entries(parLic).map(([l, n]) =>
+      `<label><input type="radio" name="lic" onchange="etat.lic='${l}'; charger()"> ${l} <span class="n">${n}</span></label>`).join('');
+
+  charger();
+})().catch(console.error);
+</script>
+</body>
+</html>

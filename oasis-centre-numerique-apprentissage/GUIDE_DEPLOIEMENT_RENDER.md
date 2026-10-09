@@ -11,7 +11,6 @@ Le projet est une application Node.js simple :
 - serveur principal : `server.js`
 - fichiers publics : `public/`
 - base de données JSON locale : `data/`
-- configuration Node : `package.json`
 - commande de démarrage : `node server.js`
 - aucune dépendance npm obligatoire
 
@@ -19,7 +18,6 @@ Le serveur utilise automatiquement la variable `PORT` fournie par Render :
 
 ```js
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
 ```
 
 Cela signifie qu'il ne faut pas fixer manuellement le port à `3000` sur Render. Render attribue son propre port.
@@ -89,7 +87,7 @@ Utilisez les réglages suivants :
 | Region | Choisir la région la plus proche de vos utilisateurs |
 | Branch | `main` |
 | Runtime / Language | `Node` |
-| Build Command | `yarn` ou `echo "Aucune compilation requise"` |
+| Build Command | `echo "Aucune compilation requise"` |
 | Start Command | `node server.js` |
 | Instance Type | Free pour test, paid pour production |
 | Health Check Path | `/` |
@@ -200,7 +198,6 @@ Si ces URL affichent du JSON, le serveur fonctionne correctement.
 Vérifiez dans Render :
 
 - `Start Command` doit être `node server.js`
-- `Build Command` peut être `yarn`, car le projet contient maintenant un `package.json`
 - `server.js` doit être à la racine du projet ou dans le `Root Directory`
 - le service doit être de type `Web Service`, pas `Static Site`
 
@@ -210,7 +207,6 @@ Vérifiez que le code utilise bien :
 
 ```js
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
 ```
 
 Le projet OASIS utilise déjà cette logique.
@@ -283,7 +279,7 @@ Pour un vrai lancement public :
 |---|---|
 | Type de service | Web Service |
 | Runtime | Node |
-| Build Command | `yarn` ou `echo "Aucune compilation requise"` |
+| Build Command | `echo "Aucune compilation requise"` |
 | Start Command | `node server.js` |
 | Health Check Path | `/` |
 | Disque persistant | Oui pour production |

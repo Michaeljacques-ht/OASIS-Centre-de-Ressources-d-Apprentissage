@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dissertations enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const sujets = [
+  { icon: "✎", titre: "La mondialisation : opportunités et défis pour les pays en développement", meta: "Durée : 2 h · Mots attendus : 600 - 800 · 24 élèves assignés", tags: ["Histoire-Géo", "Secondaire 4", "Argumentatif"], dates: "Créée le 15/05/2024<br>Modifiée le 20/05/2024" },
+  { icon: "⚗", titre: "Le clonage humain doit-il être autorisé ?", meta: "Durée : 1 h 30 · Mots attendus : 500 - 700 · 18 élèves assignés", tags: ["Sciences", "Secondaire 5", "Délibératif"], dates: "Créée le 12/05/2024<br>Modifiée le 18/05/2024" },
+  { icon: "Aa", titre: "Les réseaux sociaux : menace ou opportunité pour la jeunesse ?", meta: "Durée : 1 h 45 · Mots attendus : 500 - 700 · 20 élèves assignés", tags: ["Français", "Secondaire 3", "Argumentatif"], dates: "Créée le 10/05/2024<br>Modifiée le 12/05/2024" },
+  { icon: "◎", titre: "La décolonisation en Afrique : un tournant décisif", meta: "Durée : 2 h · Mots attendus : 600 - 800 · 22 élèves assignés", tags: ["Histoire-Géo", "Secondaire 4", "Explicatif"], dates: "Créée le 08/05/2024<br>Modifiée le 11/05/2024" },
+  { icon: "◌", titre: "Peut-on se passer de la vérité pour être heureux ?", meta: "Durée : 1 h 30 · Mots attendus : 500 - 700 · 16 élèves assignés", tags: ["Philosophie", "Secondaire 5", "Réflexif"], dates: "Créée le 05/05/2024<br>Modifiée le 07/05/2024" }
+];
+
+function ligneSujet(s) {
+  return `<article class="object-row">
+    <span class="object-check"></span>
+    <span class="object-icon">${s.icon}</span>
+    <div><b>${s.titre}</b><div>${s.tags.map(t => `<em class="pill">${t}</em>`).join(" ")}</div><p>${s.meta}</p></div>
+    <small class="object-meta">${s.dates}</small>
+    <div class="object-actions"><button title="Voir">⌕</button><button title="Modifier">✎</button><button title="Dupliquer">□</button><button title="Partager">⇄</button><button title="Plus">⋮</button></div>
+  </article>`;
+}
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Dissertations - Enseignants</h1>
+    <p>Proposez des sujets de dissertation pour développer la pensée critique, l’argumentation et les compétences d’expression écrite de vos élèves.</p>
+    <a class="btn btn-contour" href="/apropos" style="margin-top:6px">Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Toutes les dissertations</button><button>Par discipline</button><button>Par niveau</button><button>Mes dissertations</button><button>Partagées avec moi</button><button>Favoris</button></div>
+  <div class="category-scroll">
+    ${[["▥","Français","68 sujets"],["◎","Histoire-Géo","52 sujets"],["◌","Philosophie","37 sujets"],["⚗","Sciences","45 sujets"],["Aa","Anglais","28 sujets"],["♙","Éducation civique","24 sujets"],["…","Autres disciplines","18 sujets"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+  <div class="filters-modern">
+    <select><option>Niveau scolaire : Tous</option></select><select><option>Discipline : Toutes</option></select><select><option>Type : Tous</option></select><select><option>Durée : Toutes</option></select><input placeholder="Rechercher une dissertation..."><button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>243 dissertations trouvées</h2><a href="#">Trier par : Plus récents</a></div>
+  <div class="object-list">${sujets.map(ligneSujet).join("")}</div>
+  <div class="pagination"><button>‹</button><button class="actif">1</button><button>2</button><button>3</button><span>…</span><button>13</button><button>›</button></div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction("+", "Créer une nouvelle dissertation", "Commencer à partir de zéro", "/nouvelle-dissertation")}
+    ${quickAction("⇧", "Importer une dissertation", "Importer depuis Word, PDF ou fichier", "#")}
+    ${quickAction("□", "Dupliquer une dissertation", "Gagner du temps avec un modèle", "#")}
+    ${quickAction("⇄", "Partager une collection", "Partager plusieurs dissertations à la fois", "#")}
+  </div>
+  <div class="side-card"><h3>Mes collections <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:"Dissertations Français", meta:"16"},{titre:"Dissertations Histoire-Géo", meta:"12"},{titre:"Dissertations Philosophie", meta:"9"},{titre:"Dissertations Sciences", meta:"10"},{titre:"Dissertations Anglais", meta:"7"}])}
+  </div>
+  <div class="side-card"><h3>Statistiques <a href="#">Voir le rapport</a></h3><div class="stat-line"><span><b>243</b><small>Créées</small></span><span><b>117</b><small>Partagées</small></span><span><b>1 842</b><small>Utilisations</small></span><span><b>93%</b><small>Engagement</small></span></div><div class="line-chart"></div></div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Variez les types de sujets pour développer différentes compétences rédactionnelles chez vos élèves.</p><a href="#">En savoir plus →</a></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("dissertations", contenu, droite, {
+  search: "Rechercher une dissertation, un sujet, une notion...",
+  action: '<a class="btn btn-bleu btn-petit" href="/nouvelle-dissertation">+ Créer une dissertation</a>'
+});
+</script>
+</body>
+</html>

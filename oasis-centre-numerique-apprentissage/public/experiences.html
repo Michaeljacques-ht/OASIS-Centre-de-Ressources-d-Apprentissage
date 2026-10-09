@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mes expériences - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const exps = [
+  ['⚗','Réactions acide-base et calcul du pH','Étudier les réactions acide-base et mesurer le pH de différentes solutions.',['Chimie'],['Chimie','Secondaire 5','Expérience guidée','Publié']],
+  ['⚖','Mouvement pendulaire','Observer la période et la fréquence d’un pendule simple.',['Physique'],['Physique','Secondaire 4','Expérience guidée','Publié']],
+  ['◉','La cellule animale','Explorer la structure et les fonctions des organites.',['Biologie'],['Biologie','Secondaire 4','Démonstration','Publié']],
+  ['∑','Fonctions quadratiques','Visualiser et manipuler les paramètres d’une fonction quadratique.',['Mathématiques'],['Mathématiques','Secondaire 3','Simulation interactive','Brouillon']],
+  ['◎','Les couches de la Terre','Découvrir la structure interne de la Terre et ses caractéristiques.',['Sciences de la terre'],['Sciences de la terre','Secondaire 2','Exploration libre','Publié']]
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Mes expériences</h1>
+    <p>Créez, gérez et partagez vos expériences pédagogiques pratiques.</p>
+  </section>
+  <div class="tabs-modern"><button class="actif">Toutes mes expériences</button><button>Créées par moi (16)</button><button>Partagées avec mes classes (9)</button><button>Brouillons (3)</button><button>Favoris (5)</button></div>
+  <div class="dash-stats">
+    ${statCard('⚗','16','Expériences totales')}
+    ${statCard('✓','9','Partagées avec mes classes','green')}
+    ${statCard('♙','3','Brouillons','orange')}
+    ${statCard('★','5','Favoris','purple')}
+    ${statCard('◷','18 h 45','Temps total d’utilisation')}
+  </div>
+  <div class="filters-modern"><select><option>Discipline : Toutes</option></select><select><option>Niveau : Tous</option></select><select><option>Type : Tous</option></select><select><option>Statut : Tous</option></select><input placeholder="Rechercher une expérience..."><button class="btn btn-contour">Filtres</button></div>
+  <div class="section-head"><h2>Toutes mes expériences (16)</h2><a href="/nouveau-laboratoire">Créer une expérience</a></div>
+  <div class="teacher-table">${exps.map(e => teacherRow(e[0], e[1], e[2], e[3], e[4], 'Ouvrir')).join('')}</div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction('+','Nouvelle expérience','Créer une expérience pratique','/nouveau-laboratoire')}
+    ${quickAction('⇧','Importer une expérience','Importer un fichier .sim ou .html5','#')}
+    ${quickAction('□','Dupliquer une expérience','Gagnez du temps','#')}
+    ${quickAction('?','Guide d’utilisation','Apprendre à créer','#')}
+  </div>
+  <div class="side-card"><h3>Activité récente <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:'Réactions acide-base',meta:'Modifiée il y a 2 heures'},{titre:'Mouvement pendulaire',meta:'Modifiée il y a 1 jour'},{titre:'La cellule animale',meta:'Partagée il y a 2 jours'},{titre:'Fonctions quadratiques',meta:'Modifiée il y a 3 jours'}])}
+  </div>
+  <div class="side-card"><h3>Mes disciplines les plus utilisées</h3><div class="chart-donut"></div><p style="color:var(--texte-2);font-size:13px">Chimie 31% · Physique 25% · Biologie 19% · Mathématiques 13%</p></div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Proposez des expériences interactives pour stimuler la curiosité et renforcer la compréhension des concepts.</p></div>
+`;
+
+document.getElementById('app').innerHTML = appShell('experiences', contenu, droite, {
+  search: 'Rechercher une expérience, une discipline, un niveau...',
+  action: '<a class="btn btn-bleu btn-petit" href="/nouveau-laboratoire">+ Nouvelle expérience</a>'
+});
+</script>
+</body>
+</html>

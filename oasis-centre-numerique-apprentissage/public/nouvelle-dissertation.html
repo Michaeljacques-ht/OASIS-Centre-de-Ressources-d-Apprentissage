@@ -20,21 +20,21 @@ const contenu = `
     <section>
       <div class="form-panel">
         <h3>Informations générales</h3>
-        <div class="champ"><label>Titre de la dissertation *</label><input id="dis-titre" placeholder="Ex. : La mondialisation : opportunités ou menaces pour les pays en développement ?"></div>
+        ${formField('Titre de la dissertation *','Ex. : La mondialisation : opportunités ou menaces pour les pays en développement ?')}
         <div class="form-grid">
-          <div class="champ"><label>Discipline *</label><select id="dis-discipline"><option>Français</option><option>Histoire-Géo</option><option>Philosophie</option></select></div>
-          <div class="champ"><label>Niveau scolaire *</label><select id="dis-niveau"><option>Secondaire 3</option><option>Secondaire 4</option><option>Secondaire 5</option></select></div>
-          <div class="champ"><label>Type de dissertation *</label><select id="dis-type"><option>Argumentative</option><option>Explicative</option><option>Critique</option></select></div>
-          <div class="champ"><label>Durée recommandée</label><select id="dis-duree"><option>2 h 00 min</option><option>1 h 30 min</option><option>3 h 00 min</option></select></div>
+          <div class="champ"><label>Discipline *</label><select><option>Sélectionner une discipline</option><option>Français</option><option>Histoire-Géo</option><option>Philosophie</option></select></div>
+          <div class="champ"><label>Niveau scolaire *</label><select><option>Sélectionner un niveau</option><option>Secondaire 3</option><option>Secondaire 4</option><option>Secondaire 5</option></select></div>
+          <div class="champ"><label>Type de dissertation *</label><select><option>Sélectionner le type</option><option>Argumentative</option><option>Explicative</option><option>Critique</option></select></div>
+          <div class="champ"><label>Durée recommandée</label><select><option>2 h 00 min</option><option>1 h 30 min</option><option>3 h 00 min</option></select></div>
         </div>
         <div class="hero-chips" style="margin:12px 0"><span style="background:var(--bleu);color:#fff">Argumenter</span><span>Analyser</span><span>Synthétiser</span></div>
-        <div class="champ"><label>Mots-clés</label><input id="dis-mots" placeholder="Ex. : mondialisation, économie, développement..."></div>
+        ${formField('Mots-clés','Ex. : mondialisation, économie, développement...')}
       </div>
       <div class="form-panel">
         <h3>Résumé / Contexte</h3>
         <div class="toolbar-mini"><b>B</b><i>I</i><u>U</u><span>☰</span><span>▧</span><span>↗</span></div>
-        <div id="dis-contexte" class="editor-box" contenteditable="true">Fournissez un contexte ou des éléments d’introduction utiles pour les élèves...</div>
-        <div class="footer-action"><a class="btn btn-contour" href="/dashboard">Annuler</a><button class="btn btn-bleu" onclick="sauverDissertation(true)">Suivant →</button></div>
+        <div class="editor-box">Fournissez un contexte ou des éléments d’introduction utiles pour les élèves...</div>
+        <div class="footer-action"><a class="btn btn-contour" href="/dashboard">Annuler</a><button class="btn btn-bleu">Suivant →</button></div>
       </div>
     </section>
     <aside>
@@ -51,26 +51,8 @@ const contenu = `
 
 document.getElementById('app').innerHTML = appShell('dissertations', contenu, '', {
   search: 'Rechercher une dissertation, un sujet, une notion...',
-  action: '<button class="btn btn-bleu btn-petit" onclick="sauverDissertation()">Enregistrer</button>'
+  action: '<a class="btn btn-bleu btn-petit" href="/nouvelle-dissertation">+ Créer une dissertation</a>'
 });
-
-async function sauverDissertation(rediriger = false) {
-  const titre = valeurChamp('dis-titre');
-  if (!titre) return toast('Le titre de la dissertation est obligatoire.', 'erreur');
-  await posterCreation('/api/dissertations', {
-    titre,
-    sujet: titre,
-    discipline: valeurChamp('dis-discipline'),
-    niveau: valeurChamp('dis-niveau'),
-    type: valeurChamp('dis-type'),
-    duree: valeurChamp('dis-duree'),
-    motsCles: valeurChamp('dis-mots'),
-    contexte: valeurChamp('dis-contexte'),
-    competences: ['Argumenter', 'Analyser', 'Synthétiser'],
-    statut: 'brouillon',
-    visibilite: 'prive'
-  }, rediriger ? '/dissertations' : '');
-}
 </script>
 </body>
 </html>

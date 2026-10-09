@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OASIS Centre numérique d'apprentissage</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur oasis-landing">
+  <section class="hero-oasis">
+    <img src="/assets/oasis-banner.jpg" alt="OASIS Centre numérique d'apprentissage">
+    <div class="hero-overlay">
+      <div class="hero-search-panel">
+        <h1>Bibliothèque numérique, ressources pédagogiques et apprentissage guidé</h1>
+        <p>Un espace moderne pour consulter des livres, vidéos, fiches, guides, ressources apprenants et ressources enseignants.</p>
+        <form class="hero-search" onsubmit="event.preventDefault(); location.href='/ressources?q='+encodeURIComponent(this.q.value)">
+          <input name="q" placeholder="Rechercher un livre, une vidéo, un guide, une ressource...">
+          <button class="btn btn-bleu">Rechercher</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div class="feature-strip">
+    <a class="feature-tile" href="/ressources"><span>▥</span><b>Livres numériques</b><small>Bibliothèque claire par niveau et discipline.</small></a>
+    <a class="feature-tile" href="/ressources-multimedias-enseignants"><span>▷</span><b>Vidéos pédagogiques</b><small>Capsules, animations, documentaires et podcasts.</small></a>
+    <a class="feature-tile" href="/ressources-methodologiques-enseignant"><span>✦</span><b>Fiches et guides</b><small>Méthodes d'étude, organisation et révision.</small></a>
+    <a class="feature-tile" href="/catalogue"><span>▤</span><b>Ressources apprenants</b><small>Exercices, cours, quiz et supports pratiques.</small></a>
+    <a class="feature-tile" href="/ressources-pedagogiques-enseignant"><span>♙</span><b>Ressources enseignants</b><small>Activités, stratégies, modèles et outils.</small></a>
+  </div>
+
+  <div class="home-grid">
+    <section>
+      <div class="section-head">
+        <h2>Explorer par domaine</h2>
+        <a href="/categories">Voir toutes les catégories</a>
+      </div>
+      <div class="category-grid">
+        <a class="category-tile" href="/ressources?categorie=sciences-maths"><span>∑</span><b>Sciences</b><small>Mathématiques, SVT, physique, chimie.</small></a>
+        <a class="category-tile" href="/ressources?categorie=informatique"><span>⌘</span><b>Technologie</b><small>Informatique, numérique, IA, bureautique.</small></a>
+        <a class="category-tile" href="/ressources?categorie=langues"><span>A</span><b>Langues</b><small>Français, anglais, créole et communication.</small></a>
+        <a class="category-tile" href="/ressources?categorie=histoire-geo"><span>◎</span><b>Géographie</b><small>Histoire, géographie, société et territoire.</small></a>
+      </div>
+
+      <div class="section-head" style="margin-top:28px">
+        <h2>Nouvelles ressources</h2>
+        <a href="/catalogue">Voir le catalogue</a>
+      </div>
+      <div class="grille" id="nouveautes"><div class="chargement">Chargement des ressources...</div></div>
+
+      <div class="section-head" style="margin-top:28px">
+        <h2>Ressources populaires</h2>
+        <a href="/catalogue?tri=populaires">Tout consulter</a>
+      </div>
+      <div class="grille" id="populaires"></div>
+    </section>
+
+    <aside>
+      <div class="side-card">
+        <h3>Accès rapide</h3>
+        <div id="stats-home" class="card-grid-2"></div>
+      </div>
+      <div class="side-card soft-callout">
+        <h3>Mon espace OASIS</h3>
+        <p>Connectez-vous pour retrouver vos favoris, votre progression, vos ressources publiées et vos groupes.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+          <a class="btn btn-bleu btn-petit" href="/connexion">Se connecter</a>
+          <a class="btn btn-contour btn-petit" href="/inscription">S'inscrire</a>
+        </div>
+      </div>
+      <div class="side-card orange-callout">
+        <h3>À surveiller</h3>
+        <p><b>Nouvelles formations disponibles</b></p>
+        <p style="color:var(--texte-2);font-size:13px">Électricité résidentielle, caisse et paiement, contrôle interne, outils numériques et intégration des TIC.</p>
+      </div>
+      <div class="side-card">
+        <h3>Espaces spécialisés</h3>
+        <a class="quick-action" href="/ressources-multimedias-enseignants"><span>▷</span><div><b>Ressources multimédia</b><small>Vidéos, audios, animations</small></div><strong>›</strong></a>
+        <a class="quick-action" href="/partage"><span>⇄</span><div><b>Partage de ressources</b><small>Publier et réutiliser</small></div><strong>›</strong></a>
+        <a class="quick-action" href="/groupes"><span>♙</span><div><b>Groupes</b><small>Collaborer par classe</small></div><strong>›</strong></a>
+      </div>
+    </aside>
+  </div>
+
+  <div class="cta">
+    <div style="font-size:40px">▥</div>
+    <div><h2>Un accès illimité au savoir pour bâtir votre avenir</h2>
+    <p>OASIS réunit les contenus, méthodes et espaces collaboratifs nécessaires pour apprendre partout, développer ses compétences et préparer son avenir.</p></div>
+    <a href="/ressources" class="btn btn-bleu">Explorer la bibliothèque</a>
+  </div>
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('Accueil');
+afficherPied();
+
+(async () => {
+  const s = await API.get('/api/stats');
+  document.getElementById('stats-home').innerHTML = [
+    statCard('▥', s.ressources + '+', 'Ressources'),
+    statCard('▷', s.quiz, 'Quiz'),
+    statCard('⇩', fmtNombre(s.telechargements), 'Téléchargements'),
+    statCard('★', s.noteMoyenne + '/5', 'Note moyenne')
+  ].join('');
+
+  const favoris = Auth.charger() ? (await API.get('/api/favoris').catch(() => ({ ids: [] }))).ids : [];
+  const nouv = await API.get('/api/ressources?tri=recentes&parPage=4');
+  document.getElementById('nouveautes').innerHTML = nouv.items.map(r => carteRessource(r, favoris)).join('');
+  const pop = await API.get('/api/ressources?tri=populaires&parPage=4');
+  document.getElementById('populaires').innerHTML = pop.items.map(r => carteRessource(r, favoris)).join('');
+})().catch(console.error);
+</script>
+</body>
+</html>

@@ -21,20 +21,20 @@ const contenu = `
       <div class="form-panel">
         <h3>Informations générales</h3>
         <div class="form-grid">
-          <div class="champ"><label>Titre du TD *</label><input id="td-titre" placeholder="Ex. : Les équations du premier degré"></div>
-          <div class="champ"><label>Discipline *</label><select id="td-discipline"><option>Mathématiques</option><option>Sciences physiques</option><option>Français</option></select></div>
-          <div class="champ"><label>Niveau scolaire *</label><select id="td-niveau"><option>Secondaire 2</option><option>Secondaire 3</option><option>Secondaire 4</option></select></div>
-          <div class="champ"><label>Chapitre / Thème</label><input id="td-chapitre" placeholder="Ex. : Chapitre 2 - Équations linéaires"></div>
-          <div class="champ"><label>Durée estimée</label><select id="td-duree"><option>45 min</option><option>30 min</option><option>1 h</option></select></div>
-          <div class="champ"><label>Nombre d’exercices</label><select id="td-exercices"><option value="10">10 exercices</option><option value="5">5 exercices</option><option value="15">15 exercices</option></select></div>
+          ${formField("Titre du TD *", "Ex. : Les équations du premier degré")}
+          <div class="champ"><label>Discipline *</label><select><option>Sélectionner une discipline</option><option>Mathématiques</option><option>Sciences physiques</option><option>Français</option></select></div>
+          <div class="champ"><label>Niveau scolaire *</label><select><option>Sélectionner un niveau</option><option>Secondaire 2</option><option>Secondaire 3</option><option>Secondaire 4</option></select></div>
+          ${formField("Chapitre / Thème", "Ex. : Chapitre 2 - Équations linéaires")}
+          <div class="champ"><label>Durée estimée</label><select><option>45 min</option><option>30 min</option><option>1 h</option></select></div>
+          <div class="champ"><label>Nombre d’exercices</label><select><option>10 exercices</option><option>5 exercices</option><option>15 exercices</option></select></div>
         </div>
         <h3 style="margin-top:12px">Objectifs d’apprentissage</h3>
         <div class="toolbar-mini"><b>B</b><i>I</i><u>U</u><span>☰</span><span>▧</span><span>↗</span></div>
-        <div id="td-objectifs" class="editor-box" contenteditable="true">Décrivez ce que les élèves doivent apprendre ou être capables de faire à la fin de ce TD...</div>
+        <div class="editor-box">Décrivez ce que les élèves doivent apprendre ou être capables de faire à la fin de ce TD...</div>
         <h3 style="margin-top:18px">Consignes générales</h3>
         <div class="toolbar-mini"><b>B</b><i>I</i><u>U</u><span>☰</span><span>▧</span><span>↗</span></div>
-        <div id="td-consignes" class="editor-box" contenteditable="true">Écrivez ici les consignes générales à suivre pour réaliser ce travail dirigé...</div>
-        <div class="footer-action"><a class="btn btn-contour" href="/travaux-diriges">Annuler</a><div><button class="btn btn-contour" onclick="sauverTD()">Enregistrer le brouillon</button> <button class="btn btn-bleu" onclick="sauverTD(true)">Suivant →</button></div></div>
+        <div class="editor-box">Écrivez ici les consignes générales à suivre pour réaliser ce travail dirigé...</div>
+        <div class="footer-action"><a class="btn btn-contour" href="/travaux-diriges">Annuler</a><div><button class="btn btn-contour">Enregistrer le brouillon</button> <button class="btn btn-bleu">Suivant →</button></div></div>
       </div>
     </section>
     <aside>
@@ -53,25 +53,8 @@ const contenu = `
 
 document.getElementById("app").innerHTML = appShell("td", contenu, "", {
   search: "Rechercher un TD, une matière, un thème...",
-  action: '<button class="btn btn-bleu btn-petit" onclick="sauverTD()">Enregistrer le brouillon</button>'
+  action: '<a class="btn btn-bleu btn-petit" href="#">Enregistrer le brouillon</a>'
 });
-
-async function sauverTD(rediriger = false) {
-  const titre = valeurChamp('td-titre');
-  if (!titre) return toast('Le titre du TD est obligatoire.', 'erreur');
-  await posterCreation('/api/travaux-diriges', {
-    titre,
-    discipline: valeurChamp('td-discipline'),
-    niveau: valeurChamp('td-niveau'),
-    chapitre: valeurChamp('td-chapitre'),
-    duree: valeurChamp('td-duree'),
-    nombreExercices: Number(valeurChamp('td-exercices', 0)),
-    objectifs: valeurChamp('td-objectifs'),
-    consignes: valeurChamp('td-consignes'),
-    statut: 'brouillon',
-    visibilite: 'prive'
-  }, rediriger ? '/travaux-diriges' : '');
-}
 </script>
 </body>
 </html>

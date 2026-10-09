@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paiement en cours - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur">
+  <div class="panneau form-carte" style="max-width:560px">
+    <div style="text-align:center;margin-bottom:16px"><img src="/assets/oasis-logo.jpg" alt="OASIS" style="width:84px;height:84px;border-radius:50%;object-fit:cover"></div>
+    <h1 style="font-size:24px;margin-bottom:8px;text-align:center">Finalisez votre paiement</h1>
+    <p style="color:var(--texte-2);font-size:14px;text-align:center">La page PLOP PLOP s'ouvre dans un nouvel onglet. Confirmez avec votre portefeuille mobile, puis revenez ici.</p>
+    <div class="panneau" style="margin-top:18px;background:var(--fond)">
+      <b>Référence</b>
+      <p id="reference" style="margin:6px 0 0;color:var(--texte-2)"></p>
+      <p id="etat" style="margin:14px 0 0;color:var(--texte-2)">Vérification auprès de la passerelle...</p>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px">
+      <a class="btn btn-contour" href="/ressources">Retour aux ressources</a>
+      <button class="btn btn-bleu" onclick="verifier()">Vérifier maintenant</button>
+    </div>
+  </div>
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('');
+afficherPied();
+
+const ref = param('ref');
+let essais = 0;
+let minuteur = null;
+document.getElementById('reference').textContent = ref || 'Référence introuvable';
+
+async function verifier() {
+  const etat = document.getElementById('etat');
+  if (!ref) {
+    etat.textContent = 'Aucune référence de paiement n’a été fournie.';
+    return;
+  }
+  try {
+    essais++;
+    const res = await API.get('/api/paiement/verifier?ref=' + encodeURIComponent(ref));
+    if (res.paye) {
+      if (minuteur) clearInterval(minuteur);
+      etat.textContent = 'Paiement confirmé. Ouverture de la ressource...';
+      location.href = res.suite;
+      return;
+    }
+    etat.textContent = (res.message || 'Paiement non encore confirmé.') + ' Tentative ' + essais + '.';
+  } catch (e) {
+    etat.textContent = e.message || 'Passerelle momentanément injoignable.';
+  }
+}
+
+if (!Auth.charger()) {
+  location.href = '/connexion?suite=' + encodeURIComponent(location.pathname + location.search);
+} else {
+  verifier();
+  minuteur = setInterval(() => {
+    if (essais >= 90) {
+      clearInterval(minuteur);
+      document.getElementById('etat').textContent = 'Paiement non confirmé. Si vous avez payé, cliquez sur Vérifier maintenant.';
+      return;
+    }
+    verifier();
+  }, 5000);
+}
+</script>
+</body>
+</html>

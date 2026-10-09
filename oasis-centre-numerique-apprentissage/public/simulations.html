@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mes simulations - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const sims = [
+  ['⚗', 'Réactions acide-base et calcul du pH', 'Explorez les réactions acide-base et le calcul du pH.', ['Chimie'], ['Chimie', 'Secondaire 5', 'Expérience guidée', 'Créée par moi']],
+  ['◉', 'La cellule animale 3D', 'Explorez la structure et les fonctions des organites.', ['Biologie'], ['Biologie', 'Secondaire 4', 'Démonstration interactive', 'Utilisée récemment']],
+  ['⚖', 'Mouvement pendulaire', 'Étudiez les lois du pendule simple.', ['Physique'], ['Physique', 'Secondaire 4', 'Expérience guidée', 'Créée par moi']],
+  ['∑', 'Fonctions quadratiques', 'Visualisez les paramètres d’une fonction quadratique.', ['Mathématiques'], ['Mathématiques', 'Secondaire 3', 'Simulation théorique', 'Partagée avec mes classes']],
+  ['◎', 'Les couches de la Terre', 'Découvrez la structure interne de la Terre.', ['Sciences de la terre'], ['Sciences de la terre', 'Secondaire 2', 'Exploration libre', 'Utilisée récemment']]
+];
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Mes simulations</h1>
+    <p>Retrouvez toutes les simulations que vous avez créées, utilisées ou enregistrées.</p>
+  </section>
+  <div class="tabs-modern"><button class="actif">Toutes (28)</button><button>Créées par moi (12)</button><button>Utilisées récemment (8)</button><button>Favoris (6)</button><button>Partagées avec mes classes (10)</button></div>
+  <div class="filters-modern"><select><option>Discipline : Toutes</option></select><select><option>Niveau : Tous</option></select><select><option>Type : Tous</option></select><input placeholder="Rechercher une simulation..."><button class="btn btn-contour">Filtres</button></div>
+  <div class="dash-stats">
+    ${statCard('⚗','28','Simulations totales')}
+    ${statCard('▷','8','Utilisées récemment','purple')}
+    ${statCard('♙','10','Partagées avec mes classes','green')}
+    ${statCard('★','6','Favoris','orange')}
+    ${statCard('◷','24 h 30','Temps total d’utilisation')}
+  </div>
+  <div class="section-head"><h2>Toutes mes simulations (28)</h2><a href="/nouveau-laboratoire">Nouvelle simulation</a></div>
+  <div class="teacher-table">${sims.map(s => teacherRow(s[0], s[1], s[2], s[3], s[4], 'Ouvrir')).join('')}</div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction('+','Nouvelle simulation','Créer une simulation interactive','/nouveau-laboratoire')}
+    ${quickAction('⇧','Importer une simulation','Importer un fichier .sim ou .html5','#')}
+    ${quickAction('□','Gérer mes expériences','Voir et organiser mes expériences','/experiences')}
+    ${quickAction('?','Guide d’utilisation','Apprendre à créer des simulations','#')}
+  </div>
+  <div class="side-card"><h3>Activité récente <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:'Réactions acide-base',meta:'Modifiée il y a 2 heures'},{titre:'Mouvement pendulaire',meta:'Utilisée il y a 1 jour'},{titre:'La cellule animale 3D',meta:'Partagée il y a 2 jours'},{titre:'Fonctions quadratiques',meta:'Modifiée il y a 3 jours'}])}
+  </div>
+  <div class="side-card"><h3>Stockage</h3><p>1.2 Go utilisés sur 5 Go</p><div class="barre-progression"><div style="width:24%"></div></div><p style="color:var(--texte-2);font-size:13px">Simulations : 850 Mo · Médias : 250 Mo</p></div>
+`;
+
+document.getElementById('app').innerHTML = appShell('simulations', contenu, droite, {
+  search: 'Rechercher une simulation, un laboratoire...',
+  action: '<a class="btn btn-bleu btn-petit" href="/nouveau-laboratoire">+ Nouveau laboratoire</a>'
+});
+</script>
+</body>
+</html>

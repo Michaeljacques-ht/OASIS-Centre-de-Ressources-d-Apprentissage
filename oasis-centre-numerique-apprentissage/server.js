@@ -10,7 +10,6 @@ const db = require('./lib/db');
 const PP = require('./lib/plopplop');
 
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 db.seed();
@@ -76,112 +75,6 @@ function enrichirRessource(r, user, achats = db.load('achats')) {
     premium: prix > 0,
     accesAutorise: aAccesRessource(user, r, achats)
   };
-}
-
-function estCreateurPedagogique(user) {
-  return !!(user && ['enseignant', 'admin'].includes(user.role));
-}
-
-function refuserNonCreateur(res) {
-  return json(res, 403, { erreur: 'Réservé aux enseignants et administrateurs.' });
-}
-
-function valeurTexte(source, cles, defaut = '') {
-  for (const cle of cles) {
-    const valeur = source && source[cle];
-    if (typeof valeur === 'string' && valeur.trim()) return valeur.trim();
-    if (typeof valeur === 'number' && Number.isFinite(valeur)) return String(valeur);
-  }
-  return defaut;
-}
-
-function valeurNombre(source, cles, defaut = 0) {
-  for (const cle of cles) {
-    const valeur = Number(source && source[cle]);
-    if (Number.isFinite(valeur)) return valeur;
-  }
-  return defaut;
-}
-
-function valeurListe(source, cles) {
-  for (const cle of cles) {
-    const valeur = source && source[cle];
-    if (Array.isArray(valeur)) return valeur.filter(Boolean);
-    if (typeof valeur === 'string' && valeur.trim()) {
-      return valeur.split(',').map(v => v.trim()).filter(Boolean);
-    }
-  }
-  return [];
-}
-
-function peutVoirContenu(user, item) {
-  if (!user) return false;
-  if (user.role === 'admin') return true;
-  return item.auteurId === user.id || item.visibilite !== 'prive';
-}
-
-function listerContenusEnseignant(req, res, url, collection) {
-  const user = getUser(req);
-  if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-  let list = db.load(collection).filter(item => peutVoirContenu(user, item));
-  const p = url.searchParams;
-  if (p.get('statut')) list = list.filter(item => item.statut === p.get('statut'));
-  if (p.get('discipline')) list = list.filter(item => [item.discipline, item.matiere].includes(p.get('discipline')));
-  if (p.get('niveau')) list = list.filter(item => item.niveau === p.get('niveau'));
-  if (p.get('q')) {
-    const q = p.get('q').toLowerCase();
-    list = list.filter(item => [
-      item.titre, item.nom, item.question, item.description, item.discipline, item.matiere
-    ].join(' ').toLowerCase().includes(q));
-  }
-  list.sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0));
-  const page = parseInt(p.get('page') || '1');
-  const parPage = parseInt(p.get('parPage') || '50');
-  json(res, 200, {
-    total: list.length,
-    page,
-    parPage,
-    items: list.slice((page - 1) * parPage, page * parPage)
-  });
-}
-
-function contenuPedagogiqueBase(collection, prefix, user, b, titreDefaut) {
-  const titre = valeurTexte(b, ['titre', 'nom', 'question', 'enonce', 'sujet'], titreDefaut);
-  return {
-    id: db.uid(prefix),
-    collection,
-    titre,
-    description: valeurTexte(b, ['description', 'resume', 'contexte', 'consignes']),
-    discipline: valeurTexte(b, ['discipline', 'matiere'], 'Général'),
-    matiere: valeurTexte(b, ['matiere', 'discipline'], 'Général'),
-    niveau: valeurTexte(b, ['niveau', 'niveauScolaire', 'classe'], 'Tous niveaux'),
-    classe: valeurTexte(b, ['classe']),
-    type: valeurTexte(b, ['type', 'typeRessource', 'typeQuestion', 'typeLaboratoire']),
-    format: valeurTexte(b, ['format']),
-    duree: valeurTexte(b, ['duree', 'dureeEstimee', 'dureeRecommandee']),
-    statut: valeurTexte(b, ['statut'], 'brouillon'),
-    visibilite: valeurTexte(b, ['visibilite'], 'prive').toLowerCase(),
-    motsCles: valeurListe(b, ['motsCles', 'tags', 'etiquettes']),
-    auteurId: user.id,
-    auteurNom: user.nom,
-    vues: 0,
-    telechargements: 0,
-    partages: 0,
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  };
-}
-
-function creerContenuEnseignant(res, user, collection, prefix, b, titreDefaut, extras = {}) {
-  const item = {
-    ...contenuPedagogiqueBase(collection, prefix, user, b, titreDefaut),
-    ...extras
-  };
-  if (!item.titre) return json(res, 400, { erreur: 'Titre requis.' });
-  const list = db.load(collection);
-  list.unshift(item);
-  db.save(collection, list);
-  return json(res, 201, item);
 }
 
 function finaliserCommande(commande, commandes, methode, infos) {
@@ -459,140 +352,6 @@ const routes = {
     json(res, 200, { ids, items: resources });
   },
 
-  /* --- Créations enseignant : questions, TD, TP, exposés, dissertations, examens, laboratoires --- */
-  'GET /api/contenus-enseignant': (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const collections = [
-      ['questions', 'Questions'],
-      ['travaux-diriges', 'Travaux dirigés'],
-      ['travaux-pratiques', 'Travaux pratiques'],
-      ['exposes', 'Exposés'],
-      ['dissertations', 'Dissertations'],
-      ['examens', 'Examens'],
-      ['laboratoires', 'Laboratoires']
-    ];
-    const details = collections.map(([collection, label]) => {
-      const items = db.load(collection).filter(item => peutVoirContenu(user, item));
-      return { collection, label, total: items.length };
-    });
-    json(res, 200, {
-      total: details.reduce((s, item) => s + item.total, 0),
-      collections: details
-    });
-  },
-
-  'GET /api/questions': (req, res, url) => listerContenusEnseignant(req, res, url, 'questions'),
-
-  'POST /api/questions': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    const enonce = valeurTexte(b, ['question', 'enonce', 'titre']);
-    if (!enonce) return json(res, 400, { erreur: 'Énoncé de question requis.' });
-    return creerContenuEnseignant(res, user, 'questions', 'qst', b, enonce, {
-      question: enonce,
-      typeQuestion: valeurTexte(b, ['typeQuestion', 'type'], 'QCM'),
-      options: valeurListe(b, ['options', 'reponses']),
-      bonne: valeurNombre(b, ['bonne', 'bonneReponse'], 0),
-      difficulte: valeurTexte(b, ['difficulte'], 'Moyenne'),
-      points: valeurNombre(b, ['points'], 1),
-      explication: valeurTexte(b, ['explication'])
-    });
-  },
-
-  'GET /api/travaux-diriges': (req, res, url) => listerContenusEnseignant(req, res, url, 'travaux-diriges'),
-
-  'POST /api/travaux-diriges': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    return creerContenuEnseignant(res, user, 'travaux-diriges', 'td', b, '', {
-      chapitre: valeurTexte(b, ['chapitre', 'theme']),
-      nombreExercices: valeurNombre(b, ['nombreExercices', 'exercices'], 0),
-      objectifs: valeurTexte(b, ['objectifs']),
-      consignes: valeurTexte(b, ['consignes']),
-      bareme: valeurTexte(b, ['bareme'], '20 points'),
-      remiseEnLigne: !!b.remiseEnLigne
-    });
-  },
-
-  'GET /api/travaux-pratiques': (req, res, url) => listerContenusEnseignant(req, res, url, 'travaux-pratiques'),
-
-  'POST /api/travaux-pratiques': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    return creerContenuEnseignant(res, user, 'travaux-pratiques', 'tp', b, '', {
-      objectif: valeurTexte(b, ['objectif', 'objectifs']),
-      materiel: valeurListe(b, ['materiel']),
-      protocole: valeurTexte(b, ['protocole', 'consignes']),
-      securite: valeurTexte(b, ['securite']),
-      difficulte: valeurTexte(b, ['difficulte'], 'Moyenne')
-    });
-  },
-
-  'GET /api/exposes': (req, res, url) => listerContenusEnseignant(req, res, url, 'exposes'),
-
-  'POST /api/exposes': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    return creerContenuEnseignant(res, user, 'exposes', 'exp', b, '', {
-      sujet: valeurTexte(b, ['sujet', 'titre']),
-      consignes: valeurTexte(b, ['consignes']),
-      criteres: valeurListe(b, ['criteres']),
-      dureePresentation: valeurTexte(b, ['dureePresentation', 'duree'])
-    });
-  },
-
-  'GET /api/dissertations': (req, res, url) => listerContenusEnseignant(req, res, url, 'dissertations'),
-
-  'POST /api/dissertations': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    return creerContenuEnseignant(res, user, 'dissertations', 'dis', b, '', {
-      sujet: valeurTexte(b, ['sujet', 'titre']),
-      competences: valeurListe(b, ['competences']),
-      contexte: valeurTexte(b, ['contexte', 'resume']),
-      motsAttendus: valeurTexte(b, ['motsAttendus']),
-      bareme: valeurTexte(b, ['bareme']),
-      correctionVisible: !!b.correctionVisible,
-      remiseEnLigne: !!b.remiseEnLigne
-    });
-  },
-
-  'GET /api/examens': (req, res, url) => listerContenusEnseignant(req, res, url, 'examens'),
-
-  'POST /api/examens': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    return creerContenuEnseignant(res, user, 'examens', 'exm', b, '', {
-      periode: valeurTexte(b, ['periode', 'date']),
-      nombreQuestions: valeurNombre(b, ['nombreQuestions'], 0),
-      points: valeurNombre(b, ['points', 'totalPoints'], 100),
-      consignes: valeurTexte(b, ['consignes']),
-      correctionAutomatique: !!b.correctionAutomatique
-    });
-  },
-
-  'GET /api/laboratoires': (req, res, url) => listerContenusEnseignant(req, res, url, 'laboratoires'),
-
-  'POST /api/laboratoires': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    return creerContenuEnseignant(res, user, 'laboratoires', 'lab', b, '', {
-      sousDiscipline: valeurTexte(b, ['sousDiscipline']),
-      typeLaboratoire: valeurTexte(b, ['typeLaboratoire', 'type'], 'Expérience guidée'),
-      scenario: valeurTexte(b, ['scenario', 'protocole']),
-      objectifs: valeurTexte(b, ['objectifs']),
-      ressourcesJointes: Array.isArray(b.ressourcesJointes) ? b.ressourcesJointes : []
-    });
-  },
-
   /* --- Outils & logiciels --- */
   'GET /api/outils': (req, res, url) => {
     let list = db.load('outils');
@@ -601,43 +360,6 @@ const routes = {
     if (p.get('licence')) list = list.filter(o => o.licence === p.get('licence'));
     if (p.get('q')) list = list.filter(o => (o.nom + o.description).toLowerCase().includes(p.get('q').toLowerCase()));
     json(res, 200, { total: list.length, items: list });
-  },
-
-  'POST /api/outils': async (req, res) => {
-    const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
-    const b = await readBody(req);
-    const nom = valeurTexte(b, ['nom', 'titre']);
-    if (!nom) return json(res, 400, { erreur: 'Nom de l’outil requis.' });
-    const outils = db.load('outils');
-    const outil = {
-      id: db.uid('out'),
-      nom,
-      categorie: valeurTexte(b, ['categorie'], 'Outil éducatif'),
-      sousCategorie: valeurTexte(b, ['sousCategorie']),
-      description: valeurTexte(b, ['description']),
-      licence: valeurTexte(b, ['licence', 'typeAcces', 'type'], 'Gratuit'),
-      langue: valeurTexte(b, ['langue'], 'Français'),
-      niveau: valeurTexte(b, ['niveau'], 'Tous niveaux'),
-      lien: valeurTexte(b, ['lien', 'lienOfficiel', 'url']),
-      lienDirect: valeurTexte(b, ['lienDirect']),
-      motsCles: valeurListe(b, ['motsCles', 'tags']),
-      plateformes: valeurListe(b, ['plateformes']),
-      note: 0,
-      votes: 0,
-      telechargements: 0,
-      populaire: false,
-      nouveau: true,
-      statut: valeurTexte(b, ['statut'], 'brouillon'),
-      visibilite: valeurTexte(b, ['visibilite'], 'prive'),
-      auteurId: user.id,
-      auteurNom: user.nom,
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    };
-    outils.unshift(outil);
-    db.save('outils', outils);
-    json(res, 201, outil);
   },
 
   /* --- Quiz --- */
@@ -682,26 +404,13 @@ const routes = {
 
   'POST /api/quiz': async (req, res) => {
     const user = getUser(req);
-    if (!estCreateurPedagogique(user)) return refuserNonCreateur(res);
+    if (!user || !['enseignant', 'admin'].includes(user.role))
+      return json(res, 403, { erreur: 'Réservé aux enseignants.' });
     const b = await readBody(req);
     if (!b.titre || !Array.isArray(b.questions) || !b.questions.length)
       return json(res, 400, { erreur: 'Titre et au moins une question requis.' });
     const quizzes = db.load('quizzes');
-    const quiz = {
-      id: db.uid('qz'),
-      titre: b.titre,
-      matiere: b.matiere || b.discipline || 'Général',
-      niveau: b.niveau || 'Lycée',
-      duree: b.duree || 300,
-      description: b.description || '',
-      statut: b.statut || 'publie',
-      visibilite: b.visibilite || 'prive',
-      questions: b.questions,
-      auteurId: user.id,
-      auteurNom: user.nom,
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    };
+    const quiz = { id: db.uid('qz'), titre: b.titre, matiere: b.matiere || 'Général', niveau: b.niveau || 'Lycée', duree: b.duree || 300, description: b.description || '', questions: b.questions, auteurId: user.id };
     quizzes.push(quiz);
     db.save('quizzes', quizzes);
     json(res, 201, { id: quiz.id });
@@ -727,13 +436,6 @@ const routes = {
       enseignants: users.filter(u => u.role === 'enseignant').length,
       quiz: db.load('quizzes').length,
       outils: db.load('outils').length,
-      questions: db.load('questions').length,
-      travauxDiriges: db.load('travaux-diriges').length,
-      travauxPratiques: db.load('travaux-pratiques').length,
-      exposes: db.load('exposes').length,
-      dissertations: db.load('dissertations').length,
-      examens: db.load('examens').length,
-      laboratoires: db.load('laboratoires').length,
       categories: db.load('categories').length,
       quizRealises: resultats.length,
       tauxReussite: resultats.length
@@ -818,8 +520,8 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`\nOASIS Centre numérique d'apprentissage — http://${HOST}:${PORT}\n`);
+server.listen(PORT, () => {
+  console.log(`\nOASIS Centre numérique d'apprentissage — http://localhost:${PORT}\n`);
   console.log('Comptes de démonstration :');
   console.log('  Admin      : admin@oasis.ht / admin123');
   console.log('  Enseignant : enseignant@oasis.ht / prof123');

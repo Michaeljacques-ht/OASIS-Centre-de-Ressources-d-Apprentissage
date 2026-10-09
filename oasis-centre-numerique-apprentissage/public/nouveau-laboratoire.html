@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nouveau laboratoire virtuel - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:8px 0 18px">
+    <span class="row-icon" style="width:64px;height:64px;font-size:32px">⚗</span>
+    <div><h1>Nouveau laboratoire virtuel</h1><p style="color:var(--texte-2)">Créez un nouveau laboratoire ou une simulation interactive pour vos élèves.</p></div>
+  </section>
+  ${wizardSteps(['Informations générales','Contenu et scénarios','Paramètres pédagogiques','Ressources et configuration','Publication'])}
+  <div class="builder-layout">
+    <section>
+      <div class="form-panel">
+        <h3>Informations générales</h3>
+        <div class="form-grid">
+          ${formField('Titre du laboratoire *','Ex. : Réactions acide-base et calcul du pH')}
+          <div class="champ"><label>Discipline *</label><select><option>Sélectionner une discipline</option><option>Chimie</option><option>Physique</option><option>Biologie</option><option>Mathématiques</option></select></div>
+          <div class="champ"><label>Niveau scolaire cible *</label><select><option>Sélectionner le niveau</option><option>Secondaire 2</option><option>Secondaire 3</option><option>Secondaire 4</option><option>Secondaire 5</option></select></div>
+          <div class="champ"><label>Sous-discipline</label><select><option>Sélectionner une sous-discipline</option><option>Acide-base</option><option>Mécanique</option><option>Cellule</option><option>Fonctions</option></select></div>
+        </div>
+        <h3 style="margin-top:18px">Type de laboratoire *</h3>
+        <div class="choice-grid">
+          <label class="choice-card actif"><span>⚗</span><b>Expérience guidée</b><small>Étapes prédéfinies</small></label>
+          <label class="choice-card"><span>△</span><b>Exploration libre</b><small>Accès libre aux outils</small></label>
+          <label class="choice-card"><span>∑</span><b>Simulation théorique</b><small>Modélisation de concepts</small></label>
+          <label class="choice-card"><span>▷</span><b>Démo interactive</b><small>Présentation dynamique</small></label>
+        </div>
+        <div style="margin-top:18px">${formField('Brève description *','Décrivez brièvement les objectifs, les concepts abordés et ce que les élèves apprendront...','textarea')}</div>
+      </div>
+      <div class="form-panel">
+        <h3>Média d’illustration</h3>
+        <div class="upload-grid">
+          <div><label><b>Image de couverture *</b></label><div class="upload-zone">▧<br>Glisser-déposer une image ici<br><button class="btn btn-contour btn-petit">Choisir un fichier</button><small>JPG, PNG · max. 2 Mo</small></div></div>
+          <div><label><b>Vidéo de présentation</b></label><div class="upload-zone">▷<br>Glisser-déposer une vidéo ici<br><button class="btn btn-contour btn-petit">Choisir un fichier</button><small>MP4, WebM · max. 50 Mo</small></div></div>
+        </div>
+        <div class="footer-action"><a class="btn btn-contour" href="/laboratoire">Annuler</a><button class="btn btn-bleu">Suivant →</button></div>
+      </div>
+    </section>
+    <aside>
+      <div class="preview-card"><h3>Aperçu en direct</h3><div class="preview-visual">⚗</div><h3>Titre du laboratoire <span class="pill purple">Discipline</span></h3><p class="stars">★★★★☆ <small>(0)</small></p><p style="color:var(--texte-2)">Brève description du laboratoire apparaîtra ici...</p></div>
+      <div class="preview-card soft-callout"><h3>Conseils pour un bon laboratoire</h3><p>Définissez des objectifs clairs, choisissez des scénarios réalistes, intégrez des questions et testez le laboratoire avant publication.</p></div>
+      <div class="preview-card orange-callout"><h3>Bon à savoir</h3><p>Vous pourrez modifier les informations et le contenu à tout moment, même après publication.</p></div>
+    </aside>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('nouveau-laboratoire', contenu, '', {
+  search: 'Rechercher un laboratoire, une simulation, une expérience...',
+  action: '<a class="btn btn-bleu btn-petit" href="/nouveau-laboratoire">+ Nouveau laboratoire</a>'
+});
+</script>
+</body>
+</html>

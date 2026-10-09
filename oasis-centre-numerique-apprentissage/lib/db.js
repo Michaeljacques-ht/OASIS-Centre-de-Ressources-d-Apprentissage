@@ -229,13 +229,6 @@ function seed() {
   save('sessions', []);    // sessions actives
   save('commandes', []);   // commandes de paiement PLOP PLOP
   save('achats', []);      // ressources payantes débloquées
-  save('questions', []);
-  save('travaux-diriges', []);
-  save('travaux-pratiques', []);
-  save('exposes', []);
-  save('dissertations', []);
-  save('examens', []);
-  save('laboratoires', []);
 
   console.log(`✅ Base initialisée : ${users.length} utilisateurs, ${categories.length} catégories, ${resources.length} ressources, ${outils.length} outils, ${quizzes.length} quiz.`);
 }

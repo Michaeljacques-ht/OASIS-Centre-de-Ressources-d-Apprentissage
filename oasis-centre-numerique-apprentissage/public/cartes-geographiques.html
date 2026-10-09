@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartes géographiques enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const cartes = [
+  ["Relief du monde", "Géographie · Secondaire 1", "Dr. M. Pierre", "12.4k", "PHYSIQUE", "", true],
+  ["Afrique : Carte politique", "Géographie · Secondaire 2", "Prof. R. Dorval", "9.8k", "POLITIQUE", "political"],
+  ["Densité de population mondiale", "Géographie · Secondaire 3", "Équipe Educa", "9.1k", "THÉMATIQUE", "thematic"],
+  ["Le monde en 1914", "Histoire · Secondaire 4", "Prof. J. Baptiste", "6.6k", "HISTORIQUE", "historic"],
+  ["Haïti : Carte administrative", "Géographie · Secondaire 1", "Dr. M. Pierre", "7.3k", "POLITIQUE", "political"],
+  ["Bassins versants d’Haïti", "Géographie · Secondaire 2", "Équipe Educa", "5.9k", "PHYSIQUE", ""],
+  ["Zones climatiques du monde", "Géographie · Secondaire 3", "Prof. L. Laurent", "8.7k", "THÉMATIQUE", "thematic"],
+  ["L’Empire romain à son apogée", "Histoire · Secondaire 4", "Prof. C. Jean", "5.1k", "HISTORIQUE", "historic"]
+];
+
+function carteGeo(c) {
+  return `<article class="map-card ${c[6] ? "actif" : ""}">
+    <div class="map-thumb ${c[5]}"><span class="map-badge">${c[4]}</span></div>
+    <div class="map-card-body"><b>${c[0]}</b><small>${c[1]}</small><p class="object-meta" style="margin-top:8px">${c[2]} <span style="float:right">⌕ ${c[3]}</span></p></div>
+  </article>`;
+}
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Cartes géographiques - Enseignants</h1>
+    <p>Explorez, utilisez et partagez des cartes géographiques précises et pédagogiques pour illustrer vos cours et activités.</p>
+    <a class="btn btn-contour" href="/apropos" style="margin-top:6px">Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Toutes les cartes</button><button>Cartes physiques</button><button>Cartes politiques</button><button>Cartes thématiques</button><button>Cartes historiques</button><button>Atlas interactifs</button><button>Mes favoris</button></div>
+  <div class="category-scroll">
+    ${[["◎","Monde","1 245 cartes"],["◌","Afrique","856 cartes"],["◍","Amérique","734 cartes"],["◒","Europe","612 cartes"],["◓","Asie","898 cartes"],["◐","Océanie","245 cartes"],["◉","Haïti","312 cartes"],["…","Plus","Autres régions"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+  <div class="filters-modern">
+    <select><option>Type de carte : Tous</option></select><select><option>Niveau scolaire : Tous</option></select><select><option>Discipline : Toutes</option></select><select><option>Format : Tous</option></select><select><option>Trier : Plus récents</option></select><button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>3 902 cartes trouvées</h2><a href="#">Affichage : grille</a></div>
+  <div class="map-grid">${cartes.map(carteGeo).join("")}</div>
+  <div class="pagination"><button>Charger plus de cartes ˅</button></div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Aperçu de la carte sélectionnée</h3><div class="map-thumb" style="height:170px;border-radius:8px"></div><p><b>Relief du monde</b></p><p class="object-meta">Type : Carte physique<br>Niveau : Secondaire 1<br>Discipline : Géographie<br>Format : Image (JPG)<br>Auteur : Dr. M. Pierre</p><a class="btn btn-bleu btn-bloc" href="#">Voir en plein écran</a></div>
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction("⇩", "Télécharger la carte", "JPG, PNG ou PDF", "#")}
+    ${quickAction("▣", "Intégrer dans un document", "QR Code ou lien", "#")}
+    ${quickAction("⇄", "Partager cette carte", "Lien, Email, Réseaux sociaux", "#")}
+    ${quickAction("♡", "Ajouter aux favoris", "Sauvegarder pour plus tard", "#")}
+    ${quickAction("+", "Créer une activité", "Utiliser cette carte en classe", "#")}
+  </div>
+  <div class="side-card soft-callout"><h3>Intégration facile</h3><div class="qr-box"></div><p class="object-meta" style="margin-top:12px">https://diffusion.educa.ht/map/1256</p><a href="#">Personnaliser le QR Code</a></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("cartes", contenu, droite, {
+  search: "Rechercher une carte géographique, un lieu, une région...",
+  action: '<a class="btn btn-contour btn-petit" href="#">+ Déposer une ressource</a>'
+});
+</script>
+</body>
+</html>

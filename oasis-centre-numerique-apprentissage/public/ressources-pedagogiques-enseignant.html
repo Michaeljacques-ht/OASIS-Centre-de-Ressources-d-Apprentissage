@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ressources pédagogiques enseignant - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const ressources = [
+  ["FICHE ENSEIGNANT", "Fiche de préparation - La Révolution française", "Histoire · Secondaire 4", "12.4k", "245", "▥", ""],
+  ["FICHE ACTIVITÉ", "Fiche d’activité - Les fractions", "Mathématiques · Secondaire 1", "8.7k", "320", "÷", "warm"],
+  ["PRÉSENTATION", "Présentation - Les écosystèmes", "Sciences · Secondaire 2", "6.5k", "189", "◉", "green"],
+  ["GUIDE", "Guide pédagogique - Intégration des TICE", "Pédagogie · Tous niveaux", "9.3k", "276", "⌘", "navy"],
+  ["PLAN DE LEÇON", "Plan de leçon - L’électricité", "Physique · Secondaire 3", "5.9k", "140", "⚡", "cyan"],
+  ["FICHE ENSEIGNANT", "Fiche de préparation - Carte de l’Afrique", "Géographie · Secondaire 1", "7.2k", "198", "◎", "green"],
+  ["ACTIVITÉ INTERACTIVE", "Activité interactive - Le système solaire", "Sciences · Secondaire 1", "11.1k", "560", "▷", "purple"],
+  ["DOCUMENT", "Corrigé - Exercices sur les verbes", "Français · Secondaire 2", "4.8k", "92", "Aa", "warm"]
+];
+
+function cartePedago(r) {
+  return `<article class="edu-resource-card">
+    <div class="edu-thumb ${r[6]}" data-icon="${r[5]}"><span class="edu-label">${r[0]}</span><span class="edu-format">${r[0].includes("PRÉSENTATION") ? "PPTX" : r[0].includes("INTERACTIVE") ? "HTML5" : r[0].includes("DOCUMENT") ? "DOCX" : "PDF"}</span><button class="edu-bookmark">♡</button></div>
+    <div class="edu-card-body"><b>${r[1]}</b><p>${r[2]}</p><p class="object-meta">Jean B. <span style="float:right">⌕ ${r[3]} &nbsp; ⇩ ${r[4]}</span></p><p class="stars">★★★★★ <small>4.8</small></p></div>
+  </article>`;
+}
+
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:10px 0 22px">
+    <span class="row-icon" style="width:58px;height:58px;font-size:30px">▤</span>
+    <div><h1>Ressources pédagogiques - Enseignant</h1><p style="color:var(--texte-2)">Accédez à des ressources de qualité pour planifier vos cours, créer des activités et améliorer vos pratiques pédagogiques.</p></div>
+    <a class="btn btn-contour btn-petit" href="/apropos" style="margin-left:auto">? Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Pour les enseignants</button><button onclick="location.href='/ressources-pedagogiques-eleves'">Pour les élèves</button></div>
+  <div class="category-scroll">
+    ${[["▧","Fiches de préparation","1 245"],["✎","Fiches d’activités","2 356"],["▣","Présentations de cours","1 876"],["▥","Guides & manuels","985"],["✓","Plans de leçon","1 276"],["▦","Autres ressources","2 145"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+  <div class="filters-modern"><select><option>Discipline</option></select><select><option>Niveau scolaire</option></select><select><option>Type de ressource</option></select><select><option>Format</option></select><select><option>Tri : Plus récentes</option></select><button class="btn btn-contour">Filtres</button></div>
+  <div class="section-head"><h2>2 458 ressources trouvées</h2><a href="#">Affichage : grille</a></div>
+  <div class="resource-card-grid">${ressources.map(cartePedago).join("")}</div>
+`;
+
+const droite = `
+  <div class="side-card advanced-filter"><h3>Filtres avancés <a href="#">Réinitialiser</a></h3>
+    ${formField("Discipline", "Sélectionner", "select")}
+    ${formField("Niveau scolaire", "Sélectionner", "select")}
+    ${formField("Type de ressource", "Sélectionner", "select")}
+    ${formField("Format", "Sélectionner", "select")}
+    ${formField("Mots-clés", "Ex: fractions, écosystème...")}
+    <button class="btn btn-bleu btn-bloc">Appliquer les filtres</button>
+  </div>
+  <div class="side-card soft-callout"><h3>Intégration facile</h3><p>Chaque ressource possède un lien et un QR Code uniques à partager ou à intégrer dans vos documents.</p><a class="btn btn-contour btn-petit" href="#">En savoir plus →</a></div>
+  <div class="side-card"><h3>Ressources populaires</h3>${featuredList([{titre:"Fiche d’activité - Le climat",meta:"15.3k"},{titre:"Présentation - La photosynthèse",meta:"12.1k"},{titre:"Exercices corrigés - Fonctions",meta:"9.8k"}])}<a href="#" style="display:block;margin-top:12px;color:var(--bleu);font-weight:800">Voir plus →</a></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("pedagogie", contenu, droite, {
+  search: "Rechercher une ressource, un thème, une discipline...",
+  action: '<a class="btn btn-contour btn-petit" href="#">+ Créer</a>'
+});
+</script>
+</body>
+</html>

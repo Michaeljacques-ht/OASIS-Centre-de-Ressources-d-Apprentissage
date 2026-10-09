@@ -21,20 +21,20 @@ const contenu = `
       <div class="form-panel">
         <h3>Informations générales</h3>
         <div class="form-grid">
-          ${formField('Nom de l’outil *','Ex. : Quizizz, Canva, Kahoot!, Padlet...')}
-          <div class="champ"><label>Catégorie *</label><select><option>Sélectionner une catégorie</option><option>Création de contenu</option><option>Évaluation</option><option>Collaboration</option><option>Organisation</option></select></div>
-          <div class="champ"><label>Sous-catégorie</label><select><option>Sélectionner une sous-catégorie</option><option>Quiz</option><option>Présentation</option><option>Tableau collaboratif</option></select></div>
-          <div class="champ"><label>Niveau scolaire cible *</label><select><option>Sélectionner le niveau</option><option>Primaire</option><option>Secondaire</option><option>Tout niveau</option></select></div>
+          <div class="champ"><label>Nom de l’outil *</label><input id="outil-nom" placeholder="Ex. : Quizizz, Canva, Kahoot!, Padlet..."></div>
+          <div class="champ"><label>Catégorie *</label><select id="outil-categorie"><option>Création de contenu</option><option>Évaluation</option><option>Collaboration</option><option>Organisation</option></select></div>
+          <div class="champ"><label>Sous-catégorie</label><select id="outil-sous-categorie"><option>Quiz</option><option>Présentation</option><option>Tableau collaboratif</option></select></div>
+          <div class="champ"><label>Niveau scolaire cible *</label><select id="outil-niveau"><option>Primaire</option><option>Secondaire</option><option>Tout niveau</option></select></div>
         </div>
-        ${formField('Brève description *','Décrivez brièvement l’outil, son objectif et ses principaux avantages...','textarea')}
+        <div class="champ"><label>Brève description *</label><textarea id="outil-description" rows="4" placeholder="Décrivez brièvement l’outil, son objectif et ses principaux avantages..."></textarea></div>
         <div class="form-grid">
-          <div class="champ"><label>Langue de l’outil *</label><select><option>Sélectionner une langue</option><option>Français</option><option>Anglais</option><option>Multilingue</option></select></div>
-          <div class="champ"><label>Type d’accès *</label><select><option>Gratuit</option><option>Freemium</option><option>Payant</option></select></div>
+          <div class="champ"><label>Langue de l’outil *</label><select id="outil-langue"><option>Français</option><option>Anglais</option><option>Multilingue</option></select></div>
+          <div class="champ"><label>Type d’accès *</label><select id="outil-acces"><option>Gratuit</option><option>Freemium</option><option>Payant</option></select></div>
         </div>
       </div>
       <div class="form-panel">
         <h3>Lien et accès</h3>
-        <div class="form-grid">${formField('Lien officiel de l’outil *','https://exemple.com')}${formField('Lien direct','Lien direct vers une ressource spécifique')}</div>
+        <div class="form-grid"><div class="champ"><label>Lien officiel de l’outil *</label><input id="outil-lien" placeholder="https://exemple.com"></div><div class="champ"><label>Lien direct</label><input id="outil-lien-direct" placeholder="Lien direct vers une ressource spécifique"></div></div>
       </div>
       <div class="form-panel">
         <h3>Image et média</h3>
@@ -46,8 +46,8 @@ const contenu = `
       <div class="form-panel">
         <h3>Compatibilité et exigences</h3>
         <div class="hero-chips" style="margin:10px 0"><span>Windows</span><span>macOS</span><span>Android</span><span>iOS</span><span style="background:var(--bleu);color:#fff">Web</span></div>
-        ${formField('Mots-clés','Ex. : évaluation, quiz, interactif, collaboration...')}
-        <div class="footer-action"><a class="btn btn-contour" href="/outils-educatifs">Annuler</a><button class="btn btn-bleu">Suivant →</button></div>
+        <div class="champ"><label>Mots-clés</label><input id="outil-mots" placeholder="Ex. : évaluation, quiz, interactif, collaboration..."></div>
+        <div class="footer-action"><a class="btn btn-contour" href="/outils-educatifs">Annuler</a><button class="btn btn-bleu" onclick="sauverOutil(true)">Suivant →</button></div>
       </div>
     </section>
     <aside>
@@ -60,8 +60,29 @@ const contenu = `
 
 document.getElementById('app').innerHTML = appShell('ajouter-outil', contenu, '', {
   search: 'Rechercher un outil, une ressource, une activité...',
-  action: '<a class="btn btn-bleu btn-petit" href="/ajouter-outil">+ Ajouter un outil</a>'
+  action: '<button class="btn btn-bleu btn-petit" onclick="sauverOutil()">Enregistrer</button>'
 });
+
+async function sauverOutil(rediriger = false) {
+  const nom = valeurChamp('outil-nom');
+  if (!nom) return toast('Le nom de l’outil est obligatoire.', 'erreur');
+  await posterCreation('/api/outils', {
+    nom,
+    categorie: valeurChamp('outil-categorie'),
+    sousCategorie: valeurChamp('outil-sous-categorie'),
+    niveau: valeurChamp('outil-niveau'),
+    description: valeurChamp('outil-description'),
+    langue: valeurChamp('outil-langue'),
+    typeAcces: valeurChamp('outil-acces'),
+    licence: valeurChamp('outil-acces'),
+    lien: valeurChamp('outil-lien'),
+    lienDirect: valeurChamp('outil-lien-direct'),
+    motsCles: valeurChamp('outil-mots'),
+    plateformes: ['Web'],
+    statut: 'brouillon',
+    visibilite: 'prive'
+  }, rediriger ? '/outils-educatifs' : '');
+}
 </script>
 </body>
 </html>

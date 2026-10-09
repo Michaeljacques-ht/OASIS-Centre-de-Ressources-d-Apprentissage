@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau de bord ressources - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const recentes = [
+  ["PDF", "La Révolution française", "Histoire · Secondaire 4", "1.2k", "245", "▧", ""],
+  ["VIDÉO", "Les volcans et séismes", "Géographie · Secondaire 3", "856", "112", "▷", "navy"],
+  ["ACTIVITÉ", "Fiche activité - Les fractions", "Mathématiques · Secondaire 1", "1.5k", "320", "÷", "warm"],
+  ["QUIZ", "Quiz sur la photosynthèse", "Sciences · Secondaire 2", "678", "98", "✓", "purple"]
+];
+
+function carteAccueil(r) {
+  return `<article class="edu-resource-card">
+    <div class="edu-thumb ${r[6]}" data-icon="${r[5]}"><span class="edu-label">${r[0]}</span></div>
+    <div class="edu-card-body"><b>${r[1]}</b><p>${r[2]}</p><p class="object-meta">Marie L. <span style="float:right">⌕ ${r[3]} &nbsp; ⇩ ${r[4]}</span></p></div>
+  </article>`;
+}
+
+const contenu = `
+  <section class="edu-hero">
+    <div>
+      <h1>Bienvenue sur OASIS Centre numérique d’apprentissage</h1>
+      <p>Votre bibliothèque numérique de ressources pédagogiques pour enseigner, apprendre et innover.</p>
+      <form class="edu-search" onsubmit="event.preventDefault(); location.href='/ressources?q='+encodeURIComponent(this.q.value)">
+        <input name="q" placeholder="Rechercher une ressource, une discipline, un niveau...">
+        <button class="btn btn-bleu">Rechercher</button>
+      </form>
+    </div>
+    <div class="edu-hero-visual"></div>
+  </section>
+  <div class="metric-tile-grid">
+    <a class="metric-tile" href="/ressources-pedagogiques-enseignant"><span>▧</span><b>Ressources pédagogiques</b><small>2 458</small></a>
+    <a class="metric-tile" href="/ressources-methodologiques-enseignant"><span>✎</span><b>Ressources méthodologiques</b><small>1 245</small></a>
+    <a class="metric-tile" href="/banque-questions"><span>▤</span><b>Évaluations & exercices</b><small>3 782</small></a>
+    <a class="metric-tile" href="/outils-educatifs"><span>▣</span><b>Outils & logiciels</b><small>2 146</small></a>
+    <a class="metric-tile" href="/laboratoire"><span>⚗</span><b>Laboratoires numériques</b><small>946</small></a>
+    <a class="metric-tile" href="/cartes-geographiques"><span>◎</span><b>Cartes & Géographie</b><small>1 124</small></a>
+  </div>
+  <div class="section-head"><h2>Ressources récentes</h2><a href="/ressources">Voir tout →</a></div>
+  <div class="resource-card-grid">${recentes.map(carteAccueil).join("")}</div>
+  <div class="section-head" style="margin-top:28px"><h2>Disciplines populaires</h2><a href="/categories">Voir tout →</a></div>
+  <div class="category-scroll">
+    ${[["▦","Mathématiques","1 245 ressources"],["⚛","Physique","976 ressources"],["▥","Histoire","1 105 ressources"],["▤","Français","1 589 ressources"],["◎","Géographie","1 002 ressources"],["◉","Biologie","846 ressources"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Ma ressource du jour</h3><div class="edu-thumb green" data-icon="◉" style="height:135px;border-radius:8px"></div><p><b>La photosynthèse</b><br><small>Sciences · Secondaire 2</small></p><p class="object-meta">⌕ 1.3k vues · ⇩ 345 téléchargements</p><a class="btn btn-bleu btn-bloc" href="/ressource">Voir la ressource</a></div>
+  <div class="side-card"><h3>Partager cette ressource</h3><label style="font-weight:800;font-size:13px">Lien de partage</label><div style="display:flex;gap:8px;margin:8px 0 16px"><input value="https://oasis.ht/RES-12564" style="flex:1;border:1px solid var(--bord);border-radius:8px;padding:10px"><button class="btn btn-contour btn-petit">□</button></div><div class="qr-box" style="margin:0 auto 14px"></div><a class="btn btn-bleu btn-bloc btn-petit" href="#">Télécharger le QR Code</a><p style="margin-top:14px;font-weight:800">Partager sur</p><div class="share-icons"><a href="#">W</a><a href="#">f</a><a href="#">M</a><a href="#">@</a><a href="#">↗</a></div></div>
+  <div class="side-card"><h3>Statistiques <a href="#">Voir détails →</a></h3>${featuredList([{titre:"Scans du QR Code",meta:"1 245"},{titre:"Vues de la ressource",meta:"3 782"},{titre:"Téléchargements",meta:"876"},{titre:"Utilisateurs uniques",meta:"2 456"}])}<div class="line-chart" style="height:95px;margin-top:12px"></div></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("dashboard", contenu, droite, {
+  search: "Rechercher une ressource, un outil, une discipline..."
+});
+</script>
+</body>
+</html>

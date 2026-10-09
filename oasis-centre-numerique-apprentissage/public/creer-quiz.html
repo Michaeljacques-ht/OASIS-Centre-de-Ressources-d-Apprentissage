@@ -26,18 +26,9 @@ const contenu = `
     <a class="btn btn-contour btn-petit" href="#" style="margin-left:auto">⌕ Aperçu du quiz</a>
   </section>
   <div class="wizard-steps"><span class="actif"><b>✓</b>Informations</span><span class="actif"><b>2</b>Questions</span><span><b>3</b>Paramètres</span><span><b>4</b>Publication</span></div>
-  <section class="form-panel">
-    <h3>Paramètres rapides</h3>
-    <div class="form-grid">
-      <div class="champ"><label>Titre du quiz</label><input id="quiz-titre" value="Les fleuves et les paysages"></div>
-      <div class="champ"><label>Discipline</label><input id="quiz-matiere" value="Géographie"></div>
-      <div class="champ"><label>Niveau scolaire</label><select id="quiz-niveau"><option>Secondaire 1</option><option selected>Secondaire 2</option><option>Secondaire 3</option></select></div>
-      <div class="champ"><label>Durée</label><select id="quiz-duree"><option value="900">15 minutes</option><option value="1800" selected>30 minutes</option><option value="2700">45 minutes</option></select></div>
-    </div>
-  </section>
   <section class="form-panel" style="padding:0;overflow:hidden">
     <div class="question-toolbar" style="padding:16px 18px;border-bottom:1px solid var(--bord);margin:0">
-      <h3>Questions (1)</h3>
+      <h3>Questions (12)</h3>
       <div><button class="btn btn-bleu btn-petit">+ Ajouter une question</button> <button class="btn btn-contour btn-petit">⇧ Importer des questions</button> <button class="btn btn-contour btn-petit">Trier</button></div>
     </div>
     <div class="question-builder">
@@ -52,16 +43,16 @@ const contenu = `
       </aside>
       <main class="question-editor">
         <div class="form-grid">
-          <div class="champ"><label>Type de question</label><select id="quiz-type-question"><option>QCM (Choix multiple)</option><option>Vrai/Faux</option><option>Réponse courte</option></select></div>
-          <div class="champ"><label>Points de la question</label><input id="quiz-points" value="4"></div>
+          <div class="champ"><label>Type de question</label><select><option>QCM (Choix multiple)</option><option>Vrai/Faux</option><option>Réponse courte</option></select></div>
+          <div class="champ"><label>Points de la question</label><input value="4"></div>
         </div>
         <h3>Énoncé de la question</h3>
-        <div id="quiz-question" class="editor-box" contenteditable="true" style="min-height:68px;border-radius:8px;margin-bottom:0;color:var(--texte)">Quel est le plus long fleuve du monde ?</div>
+        <div class="editor-box" style="min-height:68px;border-radius:8px;margin-bottom:0;color:var(--texte)">Quel est le plus long fleuve du monde ?</div>
         <div class="toolbar-mini" style="border:1px solid var(--bord);border-top:0;border-radius:0 0 8px 8px;margin-bottom:22px"><b>B</b><i>I</i><u>U</u><span>☰</span><span>↗</span><span>x₂</span><span>Ω</span><button class="btn btn-contour btn-petit" style="margin-left:auto">Ajouter un média</button></div>
         <h3>Options de réponse</h3>
-        ${[["A","Le Nil"],["B","L’Amazone",true],["C","Le Yangtsé"],["D","Le Mississippi"]].map(o => `<div class="option-edit"><span class="option-letter ${o[2] ? "green" : ""}">${o[0]}</span><input class="quiz-option" value="${o[1]}"><span class="radio-dot ${o[2] ? "actif" : ""}"></span><button title="Supprimer">♢</button></div>`).join("")}
+        ${[["A","Le Nil"],["B","L’Amazone",true],["C","Le Yangtsé"],["D","Le Mississippi"]].map(o => `<div class="option-edit"><span class="option-letter ${o[2] ? "green" : ""}">${o[0]}</span><input value="${o[1]}"><span class="radio-dot ${o[2] ? "actif" : ""}"></span><button title="Supprimer">♢</button></div>`).join("")}
         <div class="toggle-row" style="justify-content:flex-start"><span class="toggle"></span><b>Réponses aléatoires</b></div>
-        <div class="footer-action"><button class="btn btn-contour">← Précédent</button><button class="btn btn-bleu" onclick="enregistrerQuizBuilder(true)">Suivant →</button></div>
+        <div class="footer-action"><button class="btn btn-contour">← Précédent</button><button class="btn btn-bleu">Suivant →</button></div>
       </main>
     </div>
   </section>
@@ -89,34 +80,8 @@ const droite = `
 
 document.getElementById("app").innerHTML = appShell("quiz", contenu, droite, {
   search: "Rechercher un quiz, une question, une notion...",
-  action: '<button class="btn btn-bleu btn-petit" onclick="enregistrerQuizBuilder()">Enregistrer le quiz</button>'
+  action: '<a class="btn btn-bleu btn-petit" href="/creer-quiz">+ Créer un quiz</a>'
 });
-
-async function enregistrerQuizBuilder(rediriger = false) {
-  const titre = valeurChamp('quiz-titre');
-  const enonce = valeurChamp('quiz-question');
-  const options = [...document.querySelectorAll('.quiz-option')].map(o => o.value.trim()).filter(Boolean);
-  const bonne = Math.max(0, [...document.querySelectorAll('.option-edit .radio-dot')].findIndex(dot => dot.classList.contains('actif')));
-  if (!titre || !enonce || options.length < 2) {
-    toast('Ajoutez un titre, une question et au moins deux réponses.', 'erreur');
-    return;
-  }
-  await posterCreation('/api/quiz', {
-    titre,
-    matiere: valeurChamp('quiz-matiere'),
-    niveau: valeurChamp('quiz-niveau'),
-    duree: Number(valeurChamp('quiz-duree', 1800)),
-    statut: 'brouillon',
-    questions: [{
-      q: enonce,
-      options,
-      bonne,
-      points: Number(valeurChamp('quiz-points', 4)),
-      type: valeurChamp('quiz-type-question'),
-      explication: 'Réponse enregistrée par l’enseignant.'
-    }]
-  }, rediriger ? '/quiz' : '');
-}
 </script>
 </body>
 </html>

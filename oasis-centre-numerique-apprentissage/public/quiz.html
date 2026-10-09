@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz & Formations — OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur">
+  <div class="bandeau">
+    <div class="bandeau-titre">
+      <h1><span class="pastille-icone">❓</span> Quiz & Évaluations</h1>
+      <p>Révisez vos connaissances avec des questionnaires interactifs : chronomètre, correction instantanée et explications.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <h2 class="section-titre">Choisissez votre quiz</h2>
+  <div class="grille grille-large" id="grille"><div class="chargement">Chargement des quiz…</div></div>
+
+  <div class="cta cta-clair">
+    <div style="font-size:40px">🏅</div>
+    <div><h2 style="color:var(--texte)">Préparez vos examens officiels</h2>
+    <p>Examens blancs, épreuves chronométrées, barème officiel et rapport détaillé : mettez toutes les chances de votre côté.</p></div>
+    <a href="/inscription" class="btn btn-bleu">Créer un compte gratuitement →</a>
+  </div>
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('Formations');
+afficherPied();
+
+(async () => {
+  const [quizzes, s] = await Promise.all([API.get('/api/quiz'), API.get('/api/stats')]);
+  document.getElementById('stats').innerHTML = [
+    ['❓', 'ic-bleu', quizzes.length, 'Quiz disponibles'],
+    ['📝', 'ic-vert', s.quizRealises, 'Quiz réalisés'],
+    ['🏆', 'ic-orange', s.tauxReussite + '%', 'Taux de réussite'],
+    ['👥', 'ic-violet', s.apprenants + '+', 'Apprenants']
+  ].map(([e, c, v, l]) => `<div class="stat"><div class="ic ${c}">${e}</div><div><b>${v}</b><small>${l}</small></div></div>`).join('');
+
+  const couleurs = ['v-math', 'v-hist', 'v-info', 'v-ang', 'v-svt', 'v-fr'];
+  document.getElementById('grille').innerHTML = quizzes.map((q, i) => `
+    <article class="carte">
+      <div class="carte-visuel ${couleurs[i % couleurs.length]}">❓
+        <span class="etiquette">${q.nbQuestions} QUESTIONS</span>
+      </div>
+      <div class="carte-corps">
+        <b class="titre">${q.titre}</b>
+        <div class="meta">${q.matiere} • ${q.niveau} • ⏱ ${Math.round(q.duree / 60)} min</div>
+        <p class="meta">${q.description}</p>
+        <a class="btn btn-bleu btn-bloc btn-petit" href="/quiz-jouer?id=${q.id}">Commencer le quiz →</a>
+      </div>
+    </article>`).join('');
+})().catch(console.error);
+</script>
+</body>
+</html>

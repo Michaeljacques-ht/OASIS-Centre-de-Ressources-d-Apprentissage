@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Créer un compte — OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="conteneur">
+  <div class="panneau form-carte">
+    <div style="text-align:center;margin-bottom:16px"><img src="/assets/oasis-logo.jpg" alt="OASIS" style="width:84px;height:84px;border-radius:50%;object-fit:cover"></div>
+    <h1 style="font-size:22px;margin-bottom:4px;text-align:center">Créer un compte OASIS</h1>
+    <p style="color:var(--texte-2);font-size:13.5px;margin-bottom:18px;text-align:center">Rejoignez l’espace numérique d’apprentissage et développez vos compétences dès aujourd’hui.</p>
+    <div class="alerte" id="alerte"></div>
+    <div class="champ"><label for="nom">Nom complet</label>
+      <input id="nom" placeholder="Ex. : Jean Baptiste" autocomplete="name"></div>
+    <div class="champ"><label for="email">Adresse courriel</label>
+      <input id="email" type="email" placeholder="vous@exemple.ht" autocomplete="email"></div>
+    <div class="champ"><label for="password">Mot de passe (6 caractères minimum)</label>
+      <input id="password" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+    <button class="btn btn-vert btn-bloc" onclick="inscription()">Créer mon compte</button>
+    <p style="text-align:center;font-size:13.5px;margin-top:14px">
+      Déjà inscrit ? <a href="/connexion" style="color:var(--bleu);font-weight:600">Se connecter</a>
+    </p>
+  </div>
+</main>
+<script src="/js/app.js"></script>
+<script>
+afficherEntete('');
+afficherPied();
+
+async function inscription() {
+  const alerte = document.getElementById('alerte');
+  alerte.className = 'alerte';
+  try {
+    const { token, user } = await API.post('/api/auth/inscription', {
+      nom: document.getElementById('nom').value,
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value
+    });
+    Auth.enregistrer(token, user);
+    location.href = '/dashboard';
+  } catch (e) {
+    alerte.className = 'alerte erreur';
+    alerte.textContent = e.message;
+  }
+}
+document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') inscription(); });
+</script>
+</body>
+</html>

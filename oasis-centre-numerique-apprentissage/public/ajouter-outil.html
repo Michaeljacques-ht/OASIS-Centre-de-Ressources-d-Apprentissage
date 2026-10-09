@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajouter un outil éducatif - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const contenu = `
+  <section style="display:flex;gap:16px;align-items:center;margin:8px 0 18px">
+    <span class="row-icon" style="width:64px;height:64px;font-size:32px">+</span>
+    <div><h1>Ajouter un outil éducatif</h1><p style="color:var(--texte-2)">Partagez un outil numérique utile pour faciliter l’enseignement et l’apprentissage.</p></div>
+  </section>
+  ${wizardSteps(['Informations générales','Détails et contenu','Paramètres','Publication'])}
+  <div class="builder-layout">
+    <section>
+      <div class="form-panel">
+        <h3>Informations générales</h3>
+        <div class="form-grid">
+          ${formField('Nom de l’outil *','Ex. : Quizizz, Canva, Kahoot!, Padlet...')}
+          <div class="champ"><label>Catégorie *</label><select><option>Sélectionner une catégorie</option><option>Création de contenu</option><option>Évaluation</option><option>Collaboration</option><option>Organisation</option></select></div>
+          <div class="champ"><label>Sous-catégorie</label><select><option>Sélectionner une sous-catégorie</option><option>Quiz</option><option>Présentation</option><option>Tableau collaboratif</option></select></div>
+          <div class="champ"><label>Niveau scolaire cible *</label><select><option>Sélectionner le niveau</option><option>Primaire</option><option>Secondaire</option><option>Tout niveau</option></select></div>
+        </div>
+        ${formField('Brève description *','Décrivez brièvement l’outil, son objectif et ses principaux avantages...','textarea')}
+        <div class="form-grid">
+          <div class="champ"><label>Langue de l’outil *</label><select><option>Sélectionner une langue</option><option>Français</option><option>Anglais</option><option>Multilingue</option></select></div>
+          <div class="champ"><label>Type d’accès *</label><select><option>Gratuit</option><option>Freemium</option><option>Payant</option></select></div>
+        </div>
+      </div>
+      <div class="form-panel">
+        <h3>Lien et accès</h3>
+        <div class="form-grid">${formField('Lien officiel de l’outil *','https://exemple.com')}${formField('Lien direct','Lien direct vers une ressource spécifique')}</div>
+      </div>
+      <div class="form-panel">
+        <h3>Image et média</h3>
+        <div class="upload-grid">
+          <div class="upload-zone">▧<br>Logo ou image de l’outil<br><button class="btn btn-contour btn-petit">Choisir un fichier</button></div>
+          <div class="upload-zone">▧<br>Ajouter jusqu’à 5 images<br><button class="btn btn-contour btn-petit">Ajouter des images</button></div>
+        </div>
+      </div>
+      <div class="form-panel">
+        <h3>Compatibilité et exigences</h3>
+        <div class="hero-chips" style="margin:10px 0"><span>Windows</span><span>macOS</span><span>Android</span><span>iOS</span><span style="background:var(--bleu);color:#fff">Web</span></div>
+        ${formField('Mots-clés','Ex. : évaluation, quiz, interactif, collaboration...')}
+        <div class="footer-action"><a class="btn btn-contour" href="/outils-educatifs">Annuler</a><button class="btn btn-bleu">Suivant →</button></div>
+      </div>
+    </section>
+    <aside>
+      <div class="preview-card"><h3>Aperçu de l’outil</h3><div class="preview-visual" style="background:linear-gradient(135deg,#eef4ff,#fff);color:var(--violet)">▧</div><h3>Nom de l’outil <span class="pill purple">Catégorie</span></h3><p class="stars">★★☆☆☆ <small>(0)</small></p><p style="color:var(--texte-2)">Brève description de l’outil qui apparaîtra ici...</p></div>
+      <div class="preview-card soft-callout"><h3>Bon à savoir</h3><p>Un outil bien décrit et illustré a plus de chances d’être utilisé par la communauté enseignante.</p></div>
+      <div class="preview-card green-callout"><h3>Conseils pour une bonne contribution</h3><p>Choisissez une image claire, vérifiez le lien, ajoutez des mots-clés pertinents et respectez les droits d’auteur.</p></div>
+    </aside>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('ajouter-outil', contenu, '', {
+  search: 'Rechercher un outil, une ressource, une activité...',
+  action: '<a class="btn btn-bleu btn-petit" href="/ajouter-outil">+ Ajouter un outil</a>'
+});
+</script>
+</body>
+</html>

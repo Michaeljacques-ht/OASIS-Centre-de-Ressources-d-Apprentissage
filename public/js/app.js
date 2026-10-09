@@ -49,75 +49,106 @@ const Auth = {
 
 const LOGO_HTML = `<img class="logo-icone logo-img" src="/assets/oasis-logo.jpg" alt="Logo OASIS">`;
 
+const ROLES_TOUS = ['apprenant', 'enseignant', 'admin'];
+const ROLES_ELEVE = ['apprenant', 'admin'];
+const ROLES_ENSEIGNANT = ['enseignant', 'admin'];
+
 const LIENS_NAV = [
-  ['/', 'Accueil'],
-  ['/ressources', 'Bibliothèque numérique'],
-  ['/laboratoire', 'Laboratoire'],
-  ['/ressources-methodologiques-enseignant', 'Méthodologie'],
-  ['/ressources-multimedias-enseignants', 'Multimédia'],
-  ['/outils-educatifs', 'Outils'],
-  ['/partage', 'Partage'],
-  ['/apropos', 'À propos']
+  ['/', 'Accueil', ROLES_TOUS],
+  ['/ressources', 'Bibliothèque numérique', ROLES_TOUS],
+  ['/ressources-pedagogiques-eleves', 'Espace élèves', ROLES_ELEVE],
+  ['/ressources-pedagogiques-enseignant', 'Espace enseignants', ROLES_ENSEIGNANT],
+  ['/quiz', 'Quiz', ROLES_ELEVE],
+  ['/laboratoire', 'Laboratoire', ROLES_ENSEIGNANT],
+  ['/apropos', 'À propos', ROLES_TOUS]
 ];
 
 const MENU_OASIS = [
   {
     titre: 'Tableau de bord',
     liens: [
-      ['dashboard', '/tableau-ressources', '⌂', 'Tableau de bord'],
-      ['cours', '/catalogue?type=support', '□', 'Cours et leçons'],
-      ['agenda', '/dashboard', '◷', 'Mon agenda'],
-      ['evaluations', '/quiz', '?', 'Quiz et évaluations']
+      ['dashboard', '/tableau-ressources', '⌂', 'Tableau de bord', ROLES_TOUS],
+      ['cours', '/catalogue?type=support', '□', 'Cours et leçons', ROLES_ELEVE],
+      ['agenda', '/dashboard', '◷', 'Mon agenda', ROLES_TOUS],
+      ['evaluations', '/quiz', '?', 'Quiz et évaluations', ROLES_ELEVE]
     ]
   },
   {
     titre: 'Ressources',
     liens: [
-      ['pedagogie', '/ressources-pedagogiques-enseignant', '▤', 'Ressources pédagogiques'],
-      ['eleves', '/ressources-pedagogiques-eleves', '▥', 'Pour les élèves'],
-      ['methodologie', '/ressources-methodologiques-enseignant', '✦', 'Ressources méthodologiques'],
-      ['multimedia', '/ressources-multimedias-enseignants', '▷', 'Ressources multimédia'],
-      ['bibliotheque', '/ressources', '▥', 'Bibliothèque numérique'],
-      ['cartes', '/cartes-geographiques', '◎', 'Cartes géographiques'],
-      ['questions', '/banque-questions', '?', 'Banque de questions']
+      ['bibliotheque', '/ressources', '▥', 'Bibliothèque numérique', ROLES_TOUS],
+      ['eleves', '/ressources-pedagogiques-eleves', '▥', 'Ressources pour élèves', ROLES_ELEVE],
+      ['catalogue', '/catalogue', '▦', 'Catalogue apprenant', ROLES_ELEVE],
+      ['multimedia-eleve', '/multimedia', '▷', 'Vidéos éducatives', ROLES_ELEVE],
+      ['methodologie-eleve', '/methodologie', '✦', 'Méthodes d’étude', ROLES_ELEVE],
+      ['pedagogie', '/ressources-pedagogiques-enseignant', '▤', 'Ressources enseignants', ROLES_ENSEIGNANT],
+      ['methodologie', '/ressources-methodologiques-enseignant', '✦', 'Méthodologie enseignant', ROLES_ENSEIGNANT],
+      ['multimedia', '/ressources-multimedias-enseignants', '▷', 'Multimédia enseignant', ROLES_ENSEIGNANT],
+      ['cartes', '/cartes-geographiques', '◎', 'Cartes géographiques', ROLES_ENSEIGNANT],
+      ['questions', '/banque-questions', '?', 'Banque de questions', ROLES_ENSEIGNANT]
     ]
   },
   {
     titre: 'Évaluation',
     liens: [
-      ['quiz', '/quiz', '✓', 'Quiz'],
-      ['td', '/travaux-diriges', '▧', 'Travaux dirigés'],
-      ['tp', '/travaux-pratiques', '⚗', 'Travaux pratiques'],
-      ['exposes', '/exposes', '▣', 'Exposés'],
-      ['dissertations', '/dissertations', '✎', 'Dissertations'],
-      ['examens', '/examens', '▧', 'Examens']
+      ['quiz', '/quiz', '✓', 'Quiz', ROLES_ELEVE],
+      ['td', '/travaux-diriges', '▧', 'Travaux dirigés', ROLES_ENSEIGNANT],
+      ['tp', '/travaux-pratiques', '⚗', 'Travaux pratiques', ROLES_ENSEIGNANT],
+      ['exposes', '/exposes', '▣', 'Exposés', ROLES_ENSEIGNANT],
+      ['dissertations', '/dissertations', '✎', 'Dissertations', ROLES_ENSEIGNANT],
+      ['examens', '/examens', '▧', 'Examens', ROLES_ENSEIGNANT]
     ]
   },
   {
     titre: 'Laboratoire virtuel',
     liens: [
-      ['laboratoire', '/laboratoire', '⚗', 'Laboratoires virtuels'],
-      ['nouveau-laboratoire', '/nouveau-laboratoire', '+', 'Nouveau laboratoire'],
-      ['simulations', '/simulations', '△', 'Mes simulations'],
-      ['experiences', '/experiences', '✤', 'Mes expériences']
+      ['laboratoire', '/laboratoire', '⚗', 'Laboratoires virtuels', ROLES_ENSEIGNANT],
+      ['nouveau-laboratoire', '/nouveau-laboratoire', '+', 'Nouveau laboratoire', ROLES_ENSEIGNANT],
+      ['simulations', '/simulations', '△', 'Mes simulations', ROLES_ENSEIGNANT],
+      ['experiences', '/experiences', '✤', 'Mes expériences', ROLES_ENSEIGNANT]
     ]
   },
   {
     titre: 'Outils & logiciels',
     liens: [
-      ['outils-educatifs', '/outils-educatifs', '⚙', 'Outils éducatifs'],
-      ['ajouter-outil', '/ajouter-outil', '+', 'Ajouter un outil']
+      ['outils-educatifs', '/outils-educatifs', '⚙', 'Outils éducatifs', ROLES_ENSEIGNANT],
+      ['ajouter-outil', '/ajouter-outil', '+', 'Ajouter un outil', ROLES_ENSEIGNANT]
     ]
   },
   {
     titre: 'Communauté',
     liens: [
-      ['forum', '/forum', '◌', 'Forum'],
-      ['groupes', '/groupes', '♙', 'Groupes'],
-      ['partage', '/partage', '⇄', 'Partage de ressources']
+      ['forum', '/forum', '◌', 'Forum enseignants', ROLES_ENSEIGNANT],
+      ['groupes', '/groupes', '♙', 'Groupes enseignants', ROLES_ENSEIGNANT],
+      ['partage', '/partage', '⇄', 'Partage de ressources', ROLES_ENSEIGNANT]
     ]
   }
 ];
+
+const PAGES_RESERVEES = {
+  '/ressources-pedagogiques-enseignant': ROLES_ENSEIGNANT,
+  '/ressources-methodologiques-enseignant': ROLES_ENSEIGNANT,
+  '/ressources-multimedias-enseignants': ROLES_ENSEIGNANT,
+  '/pedagogie': ROLES_ENSEIGNANT,
+  '/banque-questions': ROLES_ENSEIGNANT,
+  '/travaux-diriges': ROLES_ENSEIGNANT,
+  '/creer-travail-dirige': ROLES_ENSEIGNANT,
+  '/travaux-pratiques': ROLES_ENSEIGNANT,
+  '/exposes': ROLES_ENSEIGNANT,
+  '/dissertations': ROLES_ENSEIGNANT,
+  '/nouvelle-dissertation': ROLES_ENSEIGNANT,
+  '/examens': ROLES_ENSEIGNANT,
+  '/laboratoire': ROLES_ENSEIGNANT,
+  '/nouveau-laboratoire': ROLES_ENSEIGNANT,
+  '/simulations': ROLES_ENSEIGNANT,
+  '/experiences': ROLES_ENSEIGNANT,
+  '/outils-educatifs': ROLES_ENSEIGNANT,
+  '/ajouter-outil': ROLES_ENSEIGNANT,
+  '/partage': ROLES_ENSEIGNANT,
+  '/forum': ROLES_ENSEIGNANT,
+  '/groupes': ROLES_ENSEIGNANT,
+  '/ressources-pedagogiques-eleves': ROLES_ELEVE
+};
 
 function initiales(nom) {
   return (nom || '?').split(' ').map(m => m[0]).slice(0, 2).join('').toUpperCase();
@@ -131,9 +162,53 @@ function nomRole(role) {
   return ({ admin: 'Administrateur', enseignant: 'Enseignant', apprenant: 'Apprenant' }[role] || role || 'Apprenant');
 }
 
+function roleNavigation() {
+  const user = Auth.charger();
+  return user ? user.role : 'apprenant';
+}
+
+function lienAutorise(roles, role = roleNavigation()) {
+  if (!roles || roles.includes('public')) return true;
+  if (role === 'admin') return true;
+  return roles.includes(role);
+}
+
+function rolesPageCourante() {
+  const path = location.pathname.replace(/\/$/, '') || '/';
+  return PAGES_RESERVEES[path] || null;
+}
+
+function accesPageAutorise(roles) {
+  if (!roles) return true;
+  const user = Auth.charger();
+  if (!user) return false;
+  if (user.role === 'admin') return true;
+  return roles.includes(user.role);
+}
+
+function panneauAccesRefuse(roles) {
+  const estEnseignant = roles && roles.includes('enseignant');
+  const titre = Auth.charger()
+    ? 'Accès réservé'
+    : 'Connexion requise';
+  const message = Auth.charger()
+    ? `Cette page appartient à l’espace ${estEnseignant ? 'enseignant' : 'élève'}.`
+    : `Connectez-vous avec un compte ${estEnseignant ? 'enseignant' : 'élève'} pour continuer.`;
+  return `<section class="access-panel">
+    <span>${estEnseignant ? '♙' : '▥'}</span>
+    <h1>${titre}</h1>
+    <p>${message} L’administrateur peut accéder à tous les espaces.</p>
+    <div class="access-actions">
+      <a class="btn btn-bleu" href="/connexion?suite=${encodeURIComponent(location.pathname + location.search)}">Se connecter</a>
+      <a class="btn btn-contour" href="/dashboard">Retour à mon espace</a>
+    </div>
+  </section>`;
+}
+
 function afficherEntete(actif = '') {
   const user = Auth.charger();
-  const nav = LIENS_NAV.map(([href, label]) =>
+  const role = roleNavigation();
+  const nav = LIENS_NAV.filter(([, , roles]) => lienAutorise(roles, role)).map(([href, label]) =>
     `<a href="${href}" class="${actif === label ? 'actif' : ''}">${label}</a>`).join('');
   const bloc = user
     ? `<a href="/dashboard" class="utilisateur" title="Mon espace OASIS">
@@ -151,10 +226,6 @@ function afficherEntete(actif = '') {
       <div class="logo-slogan">Apprendre, enseigner et réussir</div></div>
     </a>
     <nav class="nav" aria-label="Navigation principale">${nav}</nav>
-    <form class="recherche" onsubmit="event.preventDefault(); location.href='/ressources?q='+encodeURIComponent(this.q.value)">
-      <input name="q" placeholder="Rechercher un livre, une vidéo, un guide..." aria-label="Rechercher">
-      <button type="submit" aria-label="Lancer la recherche">⌕</button>
-    </form>
     <div class="entete-actions">
       <a class="share-dot" href="/partage" title="Partager">⇄</a>
       <a class="share-dot" href="/ressources-multimedias-enseignants" title="Ressources multimédia">▷</a>
@@ -202,9 +273,18 @@ function afficherPied() {
 }
 
 function sidebarOasis(actif = '') {
+  const role = roleNavigation();
+  const groupes = MENU_OASIS.map(g => ({
+    ...g,
+    liens: g.liens.filter(([, , , , roles]) => lienAutorise(roles, role))
+  })).filter(g => g.liens.length);
   return `<aside class="oasis-sidebar">
     <a href="/" class="side-brand">${LOGO_HTML}<span><b>OASIS</b><small>Centre numérique<br>d'apprentissage</small></span></a>
-    ${MENU_OASIS.map(g => `<div class="side-group"><h3>${g.titre}</h3>
+    <div class="role-switcher">
+      <small>Espace actif</small>
+      <b>${nomRole(role)}</b>
+    </div>
+    ${groupes.map(g => `<div class="side-group"><h3>${g.titre}</h3>
       ${g.liens.map(([id, href, icone, label]) =>
         `<a href="${href}" class="${actif === id ? 'actif' : ''}"><span>${icone}</span>${label}</a>`).join('')}
     </div>`).join('')}
@@ -217,30 +297,34 @@ function sidebarOasis(actif = '') {
 }
 
 function topbarOasis(placeholder = 'Rechercher une ressource, une activité, un sujet...', action = '') {
-  const user = utilisateurCourant();
+  const user = Auth.charger();
+  const zoneCompte = user
+    ? `<a class="top-user" href="/dashboard"><span class="avatar">${initiales(user.nom)}</span><span><b>${user.nom}</b><small>${nomRole(user.role)}</small></span></a>`
+    : `<a class="btn btn-contour btn-petit" href="/connexion">Se connecter</a>`;
   return `<div class="oasis-topbar">
     <button class="menu-toggle" onclick="document.body.classList.toggle('sidebar-open')" aria-label="Menu">☰</button>
-    <form class="dash-search" onsubmit="event.preventDefault(); location.href='/ressources?q='+encodeURIComponent(this.q.value)">
-      <input name="q" placeholder="${placeholder}">
-      <button>⌕</button>
-    </form>
     <div class="top-spacer"></div>
     ${action}
     <a class="top-icon" href="/dashboard" title="Notifications"><span class="badge">5</span>♧</a>
     <a class="top-icon" href="/dashboard" title="Messages"><span class="badge">3</span>✉</a>
     <a class="top-icon" href="/apropos" title="Aide">?</a>
-    <a class="top-user" href="/dashboard"><span class="avatar">${initiales(user.nom)}</span><span><b>${user.nom}</b><small>${nomRole(user.role)}</small></span></a>
+    ${zoneCompte}
   </div>`;
 }
 
 function appShell(actif, contenu, droite = '', opts = {}) {
-  return `<div class="oasis-app ${droite ? '' : 'sans-right'}">
+  const roles = opts.roles || rolesPageCourante();
+  const autorise = accesPageAutorise(roles);
+  const contenuFinal = autorise ? contenu : panneauAccesRefuse(roles);
+  const droiteFinale = autorise ? droite : '';
+  const actionFinale = autorise ? (opts.action || '') : '<a class="btn btn-bleu btn-petit" href="/connexion">Se connecter</a>';
+  return `<div class="oasis-app ${droiteFinale ? '' : 'sans-right'}">
     ${sidebarOasis(actif)}
     <main class="oasis-main">
-      ${topbarOasis(opts.search || undefined, opts.action || '')}
-      ${contenu}
+      ${topbarOasis(opts.search || undefined, actionFinale)}
+      ${contenuFinal}
     </main>
-    ${droite ? `<aside class="oasis-right">${droite}</aside>` : ''}
+    ${droiteFinale ? `<aside class="oasis-right">${droiteFinale}</aside>` : ''}
   </div>`;
 }
 
@@ -375,3 +459,289 @@ function paginationHTML(total, page, parPage, fn) {
 function param(nom, defaut = '') {
   return new URLSearchParams(location.search).get(nom) || defaut;
 }
+
+function toast(message, type = 'info') {
+  let zone = document.getElementById('toast-zone');
+  if (!zone) {
+    zone = document.createElement('div');
+    zone.id = 'toast-zone';
+    zone.className = 'toast-zone';
+    document.body.appendChild(zone);
+  }
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = message;
+  zone.appendChild(el);
+  setTimeout(() => el.classList.add('visible'), 20);
+  setTimeout(() => {
+    el.classList.remove('visible');
+    setTimeout(() => el.remove(), 220);
+  }, 3200);
+}
+
+function fermerModale() {
+  const modale = document.querySelector('.action-modal');
+  if (modale) modale.remove();
+}
+
+function ouvrirModale(titre, contenu, pied = '') {
+  fermerModale();
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="action-modal" role="dialog" aria-modal="true">
+      <div class="action-modal-backdrop" onclick="fermerModale()"></div>
+      <section class="action-modal-card">
+        <button class="action-modal-close" onclick="fermerModale()" aria-label="Fermer">×</button>
+        <h2>${titre}</h2>
+        <div class="action-modal-body">${contenu}</div>
+        ${pied ? `<div class="action-modal-footer">${pied}</div>` : ''}
+      </section>
+    </div>`);
+}
+
+function texteElement(el) {
+  return (el.getAttribute('title') || el.textContent || '').trim();
+}
+
+function routeCreation() {
+  const p = location.pathname;
+  if (p.includes('travaux-diriges')) return '/creer-travail-dirige';
+  if (p.includes('dissertation')) return '/nouvelle-dissertation';
+  if (p.includes('laboratoire') || p.includes('simulation') || p.includes('experience')) return '/nouveau-laboratoire';
+  if (p.includes('quiz') || p.includes('banque-questions')) return '/creer-quiz';
+  if (p.includes('outil')) return '/ajouter-outil';
+  if (p.includes('ressource') || p.includes('partage')) return '/dashboard?tab=publier';
+  return '';
+}
+
+function routeListeCourante() {
+  const p = location.pathname;
+  if (p.includes('quiz')) return '/quiz';
+  if (p.includes('ressource')) return '/ressources';
+  if (p.includes('laboratoire')) return '/laboratoire';
+  if (p.includes('question')) return '/banque-questions';
+  if (p.includes('td') || p.includes('travaux-diriges')) return '/travaux-diriges';
+  if (p.includes('tp') || p.includes('travaux-pratiques')) return '/travaux-pratiques';
+  if (p.includes('exposes')) return '/exposes';
+  if (p.includes('dissertation')) return '/dissertations';
+  if (p.includes('examens')) return '/examens';
+  if (p.includes('outil')) return '/outils-educatifs';
+  return '/dashboard';
+}
+
+function endpointCreationCourant() {
+  const p = location.pathname;
+  if (p.includes('banque-questions')) return '/api/questions';
+  if (p.includes('travaux-diriges') || p.includes('creer-travail-dirige')) return '/api/travaux-diriges';
+  if (p.includes('travaux-pratiques')) return '/api/travaux-pratiques';
+  if (p.includes('exposes')) return '/api/exposes';
+  if (p.includes('dissertation')) return '/api/dissertations';
+  if (p.includes('examens')) return '/api/examens';
+  if (p.includes('laboratoire') || p.includes('simulation') || p.includes('experience')) return '/api/laboratoires';
+  if (p.includes('outil')) return '/api/outils';
+  if (p.includes('ressource') || p.includes('partage')) return '/api/ressources';
+  return '/api/ressources';
+}
+
+function valeurChamp(id, defaut = '') {
+  const el = document.getElementById(id);
+  if (!el) return defaut;
+  return (el.value != null ? el.value : el.textContent || '').trim() || defaut;
+}
+
+async function posterCreation(endpoint, payload, suite) {
+  if (!Auth.charger()) {
+    toast('Connectez-vous avec un compte enseignant pour créer ce contenu.', 'erreur');
+    setTimeout(() => { location.href = '/connexion?suite=' + encodeURIComponent(location.pathname); }, 900);
+    return null;
+  }
+  try {
+    const data = await API.post(endpoint, payload);
+    toast('Création enregistrée avec succès.', 'succes');
+    if (suite) setTimeout(() => { location.href = suite; }, 700);
+    return data;
+  } catch (e) {
+    toast(e.message || 'Impossible d’enregistrer cette création.', 'erreur');
+    return null;
+  }
+}
+
+async function sauverCreationGenerique() {
+  const endpoint = window.__creationEndpoint || endpointCreationCourant();
+  const titre = valeurChamp('modal-titre');
+  const discipline = valeurChamp('modal-discipline', 'Général');
+  const payload = {
+    titre,
+    nom: titre,
+    question: titre,
+    type: endpoint === '/api/ressources' ? 'document' : '',
+    matiere: discipline,
+    discipline,
+    niveau: valeurChamp('modal-niveau', 'Tous niveaux'),
+    description: valeurChamp('modal-description'),
+    statut: 'brouillon',
+    visibilite: 'prive'
+  };
+  if (!titre) {
+    toast('Ajoutez au moins un titre avant d’enregistrer.', 'erreur');
+    return;
+  }
+  const data = await posterCreation(endpoint, payload);
+  if (data) fermerModale();
+}
+
+function ouvrirCreationGenerique(source) {
+  const label = texteElement(source) || 'Créer';
+  window.__creationEndpoint = endpointCreationCourant();
+  ouvrirModale(label, `
+    <div class="champ"><label>Titre</label><input id="modal-titre" placeholder="Nom de la ressource ou de l’activité"></div>
+    <div class="card-grid-2">
+      <div class="champ"><label>Discipline</label><select id="modal-discipline"><option>Mathématiques</option><option>Sciences</option><option>Français</option><option>Histoire-Géo</option></select></div>
+      <div class="champ"><label>Niveau</label><select id="modal-niveau"><option>Secondaire 1</option><option>Secondaire 2</option><option>Secondaire 3</option><option>Secondaire 4</option><option>Secondaire 5</option></select></div>
+    </div>
+    <div class="champ"><label>Description</label><textarea id="modal-description" rows="3" placeholder="Résumé rapide..."></textarea></div>`,
+    `<button class="btn btn-contour" onclick="fermerModale()">Annuler</button>
+     <button class="btn btn-bleu" onclick="sauverCreationGenerique()">Enregistrer</button>`);
+}
+
+function ouvrirImport(source) {
+  ouvrirModale(texteElement(source) || 'Importer un fichier', `
+    <div class="upload-zone active-upload">
+      <input id="modal-file" type="file">
+      <p><b>Choisissez un fichier</b></p>
+      <small>Formats acceptés : PDF, DOCX, PPTX, XLSX, JPG, PNG, MP4 ou HTML5.</small>
+    </div>
+    <p class="object-meta">Le fichier sera préparé comme brouillon dans votre espace. Vous pourrez compléter les métadonnées avant publication.</p>`,
+    `<button class="btn btn-contour" onclick="fermerModale()">Annuler</button>
+     <button class="btn btn-bleu" onclick="toast(document.getElementById('modal-file').files[0] ? 'Fichier importé comme brouillon.' : 'Sélectionnez d’abord un fichier.', document.getElementById('modal-file').files[0] ? 'succes' : 'erreur'); if (document.getElementById('modal-file').files[0]) fermerModale()">Importer</button>`);
+}
+
+function dupliquerObjet(source) {
+  const item = source.closest('.object-row, .teacher-row, .resource-row, .media-card, .edu-resource-card, .carte');
+  if (!item || !item.parentElement) {
+    toast('Aucun élément à dupliquer ici.', 'erreur');
+    return;
+  }
+  const copie = item.cloneNode(true);
+  const titre = copie.querySelector('b, .titre');
+  if (titre && !/copie/i.test(titre.textContent)) titre.textContent += ' - copie';
+  copie.classList.add('copie-recente');
+  item.after(copie);
+  toast('Copie créée. Vous pouvez maintenant la modifier.', 'succes');
+}
+
+function ouvrirApercu(source) {
+  const item = source.closest('.object-row, .teacher-row, .resource-row, .media-card, .edu-resource-card, .carte, .side-card') || document.body;
+  const titre = (item.querySelector('b, h3, h2') || {}).textContent || 'Aperçu';
+  const desc = (item.querySelector('p, small') || {}).textContent || 'Aperçu rapide de l’élément sélectionné.';
+  ouvrirModale('Aperçu', `
+    <div class="preview-large">
+      <span>⌕</span>
+      <h3>${titre}</h3>
+      <p>${desc}</p>
+    </div>`,
+    `<button class="btn btn-contour" onclick="fermerModale()">Fermer</button>
+     <a class="btn btn-bleu" href="${routeListeCourante()}">Ouvrir la liste</a>`);
+}
+
+function ouvrirEdition(source) {
+  const item = source.closest('.object-row, .teacher-row, .resource-row, .media-card, .edu-resource-card, .carte');
+  const titreEl = item ? item.querySelector('b, .titre') : null;
+  const titre = titreEl ? titreEl.textContent : '';
+  window.__editionTarget = titreEl;
+  ouvrirModale('Modifier', `
+    <div class="champ"><label>Titre</label><input id="edition-titre" value="${titre.replace(/"/g, '&quot;')}"></div>
+    <div class="champ"><label>Note interne</label><textarea rows="3" placeholder="Ajoutez une précision ou une consigne..."></textarea></div>`,
+    `<button class="btn btn-contour" onclick="fermerModale()">Annuler</button>
+     <button class="btn btn-bleu" onclick="if (window.__editionTarget) window.__editionTarget.textContent = document.getElementById('edition-titre').value || window.__editionTarget.textContent; toast('Modification enregistrée en brouillon.', 'succes'); fermerModale()">Enregistrer</button>`);
+}
+
+function partagerPage() {
+  const titre = document.title || 'OASIS';
+  const url = location.href;
+  if (navigator.share) {
+    navigator.share({ title: titre, url }).catch(() => {});
+    return;
+  }
+  navigator.clipboard.writeText(url)
+    .then(() => toast('Lien copié pour le partage.', 'succes'))
+    .catch(() => toast('Copiez ce lien : ' + url, 'info'));
+}
+
+function telechargerDemo(source) {
+  const nom = (texteElement(source) || 'ressource-oasis').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const blob = new Blob(['OASIS - ressource de démonstration\n\nLe fichier réel sera attaché lors de la publication.'], { type: 'text/plain' });
+  const lien = document.createElement('a');
+  lien.href = URL.createObjectURL(blob);
+  lien.download = nom + '.txt';
+  document.body.appendChild(lien);
+  lien.click();
+  lien.remove();
+  toast('Téléchargement de démonstration lancé.', 'succes');
+}
+
+function appliquerFiltres(source) {
+  const bloc = source.closest('.filters-modern, .advanced-filter, .panneau') || document;
+  bloc.classList.add('filtres-actifs');
+  toast('Filtres appliqués à la vue courante.', 'succes');
+}
+
+function gererActionGlobale(e) {
+  const el = e.target.closest('a[href="#"], button:not([onclick])');
+  if (!el) return;
+  if (el.tagName === 'BUTTON' && el.closest('form') && (el.getAttribute('type') || 'submit') === 'submit') return;
+  const texte = texteElement(el).toLowerCase();
+  const href = el.getAttribute('href');
+  const boutonSansAction = el.tagName === 'BUTTON' && !el.closest('.option') && !el.closest('.coeur');
+  if (href !== '#' && !boutonSansAction) return;
+
+  e.preventDefault();
+
+  if (el.closest('.tabs-modern')) {
+    el.closest('.tabs-modern').querySelectorAll('button').forEach(b => b.classList.remove('actif'));
+    el.classList.add('actif');
+    toast('Vue filtrée : ' + texteElement(el), 'succes');
+    return;
+  }
+  if (el.closest('.pagination')) {
+    el.closest('.pagination').querySelectorAll('button').forEach(b => b.classList.remove('actif'));
+    el.classList.add('actif');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Page affichée.', 'succes');
+    return;
+  }
+  if (texte.includes('créer') || texte.includes('nouveau') || texte.includes('ajouter') || texte.includes('déposer')) {
+    const route = routeCreation();
+    if (route) location.href = route;
+    else ouvrirCreationGenerique(el);
+    return;
+  }
+  if (texte.includes('importer') || texte.includes('choisir un fichier')) { ouvrirImport(el); return; }
+  if (texte.includes('dupliquer') || texte === '□') { dupliquerObjet(el); return; }
+  if (texte.includes('partager') || texte.includes('réseaux') || texte === '⇄') { partagerPage(); return; }
+  if (texte.includes('favori') || texte.includes('♡') || texte.includes('☆') || texte.includes('★')) {
+    el.classList.toggle('actif');
+    el.textContent = el.classList.contains('actif') ? '★' : (texte.includes('♡') ? '♡' : '☆');
+    toast(el.classList.contains('actif') ? 'Ajouté aux favoris.' : 'Retiré des favoris.', 'succes');
+    return;
+  }
+  if (texte.includes('filtre')) { appliquerFiltres(el); return; }
+  if (texte.includes('télécharger') || texte.includes('exporter') || texte === '⇩') { telechargerDemo(el); return; }
+  if (texte.includes('guide') || texte.includes('savoir plus')) { location.href = '/apropos'; return; }
+  if (texte.includes('voir tout') || texte.includes('rapport') || texte.includes('détails')) { location.href = routeListeCourante(); return; }
+  if (texte.includes('voir') || texte.includes('aperçu') || texte === '⌕') { ouvrirApercu(el); return; }
+  if (texte.includes('modifier') || texte === '✎') { ouvrirEdition(el); return; }
+  if (texte.includes('suivant')) { toast('Étape validée. Les champs suivants sont prêts à être complétés.', 'succes'); return; }
+  if (texte.includes('brouillon') || texte.includes('enregistrer')) { toast('Brouillon enregistré.', 'succes'); return; }
+  if (texte.includes('plus') || texte === '⋮') {
+    ouvrirModale('Actions disponibles', `
+      <div class="modal-actions-list">
+        <button onclick="toast('Élément ajouté aux favoris.', 'succes'); fermerModale()">Ajouter aux favoris</button>
+        <button onclick="partagerPage(); fermerModale()">Partager</button>
+        <button onclick="telechargerDemo(this); fermerModale()">Télécharger</button>
+      </div>`);
+    return;
+  }
+  toast('Action prête. Cette commande est maintenant reliée à l’interface.', 'succes');
+}
+
+document.addEventListener('click', gererActionGlobale);

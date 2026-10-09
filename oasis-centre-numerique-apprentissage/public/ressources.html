@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bibliothèque numérique - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const q = param('q');
+const categorie = param('categorie');
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Bibliothèque numérique</h1>
+    <p>Explorez les livres, vidéos, fiches, guides, documents et ressources pour enseignants regroupés dans l'espace OASIS.</p>
+    <div class="hero-chips">
+      <span>Livres numériques</span><span>Vidéos pédagogiques</span><span>Fiches et guides</span><span>Ressources apprenants</span><span>Ressources enseignants</span>
+    </div>
+  </section>
+  <div class="dash-stats" id="stats"></div>
+  <div class="filters-modern">
+    <select id="filtre-type"><option value="">Type : Tous</option><option value="support">Cours</option><option value="document">Documents</option><option value="fiche">Fiches</option><option value="video">Vidéos</option><option value="podcast">Audios</option></select>
+    <select id="filtre-niveau"><option value="">Niveau : Tous</option><option>Primaire</option><option>Collège</option><option>Lycée</option></select>
+    <select id="filtre-tri"><option value="recentes">Trier par : récentes</option><option value="populaires">Trier par : populaires</option><option value="notees">Trier par : mieux notées</option></select>
+    <input id="filtre-q" value="${q || ''}" placeholder="Rechercher dans la bibliothèque...">
+    <button class="btn btn-contour" onclick="charger(1)">Filtres</button>
+  </div>
+  <div class="section-head">
+    <h2 id="titre-resultats">Ressources OASIS</h2>
+    <a href="/catalogue">Catalogue complet</a>
+  </div>
+  <div class="resource-grid" id="grille"><div class="chargement">Chargement...</div></div>
+  <div class="pagination" id="pagination"></div>
+  <div class="pagination-info" id="pagination-info"></div>
+`;
+
+const droite = `
+  <div class="side-card">
+    <h3>Accès rapide</h3>
+    ${quickAction('♥', 'Mes ressources favorites', 'Retrouver les médias enregistrés', '/dashboard')}
+    ${quickAction('◷', 'Historique de consultation', 'Continuer là où tu t’es arrêté', '/dashboard')}
+    ${quickAction('⇩', 'Téléchargements', 'Accéder aux contenus hors ligne', '/dashboard')}
+    ${quickAction('▤', 'Playlist d’apprentissage', 'Organiser ses ressources', '/dashboard')}
+  </div>
+  <div class="side-card">
+    <h3>Domaines populaires <a href="/categories">Voir tout</a></h3>
+    ${featuredList([
+      { titre: 'Sciences et mathématiques', meta: '342 ressources', href: '/ressources?categorie=sciences-maths' },
+      { titre: 'Technologie et numérique', meta: '145 ressources', href: '/ressources?categorie=informatique' },
+      { titre: 'Langues', meta: '215 ressources', href: '/ressources?categorie=langues' },
+      { titre: 'Histoire-Géographie', meta: '186 ressources', href: '/ressources?categorie=histoire-geo' }
+    ])}
+  </div>
+  <div class="side-card soft-callout">
+    <h3>Suggestion pour toi</h3>
+    <p>Découvre des contenus adaptés à ton niveau et à tes centres d'intérêt.</p>
+    <a href="/ressources-methodologiques-enseignant" class="btn btn-contour btn-petit" style="margin-top:12px">Découvrir maintenant</a>
+  </div>
+`;
+
+document.getElementById('app').innerHTML = appShell('bibliotheque', contenu, droite, {
+  search: 'Rechercher un livre, une vidéo, un guide, une ressource...'
+});
+
+let favorisIds = [];
+
+async function charger(page = 1) {
+  const type = document.getElementById('filtre-type').value;
+  const niveau = document.getElementById('filtre-niveau').value;
+  const tri = document.getElementById('filtre-tri').value;
+  const recherche = document.getElementById('filtre-q').value || q;
+  const url = `/api/ressources?page=${page}&parPage=12&tri=${tri}`
+    + (type ? '&type=' + encodeURIComponent(type) : '')
+    + (niveau ? '&niveau=' + encodeURIComponent(niveau) : '')
+    + (recherche ? '&q=' + encodeURIComponent(recherche) : '')
+    + (categorie ? '&categorie=' + encodeURIComponent(categorie) : '');
+  const res = await API.get(url);
+  document.getElementById('titre-resultats').textContent = recherche || categorie ? `${res.total} résultat(s)` : 'Ressources OASIS';
+  document.getElementById('grille').innerHTML = res.total
+    ? res.items.map(r => carteRessource(r, favorisIds)).join('')
+    : '<div class="vide"><span class="emoji">⌕</span>Aucune ressource ne correspond à ces critères.</div>';
+  document.getElementById('pagination').innerHTML = paginationHTML(res.total, page, 12, 'charger');
+  document.getElementById('pagination-info').textContent = `${res.total} ressource(s) trouvée(s)`;
+}
+
+(async () => {
+  if (Auth.charger()) favorisIds = (await API.get('/api/favoris').catch(() => ({ ids: [] }))).ids;
+  const s = await API.get('/api/stats');
+  document.getElementById('stats').innerHTML = [
+    statCard('▥', s.ressources + '+', 'Ressources disponibles'),
+    statCard('▦', s.categories, 'Domaines'),
+    statCard('⇩', fmtNombre(s.telechargements) + '+', 'Téléchargements', 'purple'),
+    statCard('♙', s.enseignants + '+', 'Enseignants', 'orange'),
+    statCard('★', s.noteMoyenne + '/5', 'Note moyenne', 'pink')
+  ].join('');
+  charger(1);
+})().catch(console.error);
+</script>
+</body>
+</html>

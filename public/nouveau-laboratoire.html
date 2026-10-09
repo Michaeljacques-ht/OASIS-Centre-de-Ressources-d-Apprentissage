@@ -21,19 +21,19 @@ const contenu = `
       <div class="form-panel">
         <h3>Informations générales</h3>
         <div class="form-grid">
-          ${formField('Titre du laboratoire *','Ex. : Réactions acide-base et calcul du pH')}
-          <div class="champ"><label>Discipline *</label><select><option>Sélectionner une discipline</option><option>Chimie</option><option>Physique</option><option>Biologie</option><option>Mathématiques</option></select></div>
-          <div class="champ"><label>Niveau scolaire cible *</label><select><option>Sélectionner le niveau</option><option>Secondaire 2</option><option>Secondaire 3</option><option>Secondaire 4</option><option>Secondaire 5</option></select></div>
-          <div class="champ"><label>Sous-discipline</label><select><option>Sélectionner une sous-discipline</option><option>Acide-base</option><option>Mécanique</option><option>Cellule</option><option>Fonctions</option></select></div>
+          <div class="champ"><label>Titre du laboratoire *</label><input id="lab-titre" placeholder="Ex. : Réactions acide-base et calcul du pH"></div>
+          <div class="champ"><label>Discipline *</label><select id="lab-discipline"><option>Chimie</option><option>Physique</option><option>Biologie</option><option>Mathématiques</option></select></div>
+          <div class="champ"><label>Niveau scolaire cible *</label><select id="lab-niveau"><option>Secondaire 2</option><option>Secondaire 3</option><option>Secondaire 4</option><option>Secondaire 5</option></select></div>
+          <div class="champ"><label>Sous-discipline</label><select id="lab-sous-discipline"><option>Acide-base</option><option>Mécanique</option><option>Cellule</option><option>Fonctions</option></select></div>
         </div>
         <h3 style="margin-top:18px">Type de laboratoire *</h3>
         <div class="choice-grid">
-          <label class="choice-card actif"><span>⚗</span><b>Expérience guidée</b><small>Étapes prédéfinies</small></label>
-          <label class="choice-card"><span>△</span><b>Exploration libre</b><small>Accès libre aux outils</small></label>
-          <label class="choice-card"><span>∑</span><b>Simulation théorique</b><small>Modélisation de concepts</small></label>
-          <label class="choice-card"><span>▷</span><b>Démo interactive</b><small>Présentation dynamique</small></label>
+          <label class="choice-card actif" data-lab-type="Expérience guidée" onclick="choisirTypeLab(this)"><span>⚗</span><b>Expérience guidée</b><small>Étapes prédéfinies</small></label>
+          <label class="choice-card" data-lab-type="Exploration libre" onclick="choisirTypeLab(this)"><span>△</span><b>Exploration libre</b><small>Accès libre aux outils</small></label>
+          <label class="choice-card" data-lab-type="Simulation théorique" onclick="choisirTypeLab(this)"><span>∑</span><b>Simulation théorique</b><small>Modélisation de concepts</small></label>
+          <label class="choice-card" data-lab-type="Démo interactive" onclick="choisirTypeLab(this)"><span>▷</span><b>Démo interactive</b><small>Présentation dynamique</small></label>
         </div>
-        <div style="margin-top:18px">${formField('Brève description *','Décrivez brièvement les objectifs, les concepts abordés et ce que les élèves apprendront...','textarea')}</div>
+        <div style="margin-top:18px"><div class="champ"><label>Brève description *</label><textarea id="lab-description" rows="4" placeholder="Décrivez brièvement les objectifs, les concepts abordés et ce que les élèves apprendront..."></textarea></div></div>
       </div>
       <div class="form-panel">
         <h3>Média d’illustration</h3>
@@ -41,7 +41,7 @@ const contenu = `
           <div><label><b>Image de couverture *</b></label><div class="upload-zone">▧<br>Glisser-déposer une image ici<br><button class="btn btn-contour btn-petit">Choisir un fichier</button><small>JPG, PNG · max. 2 Mo</small></div></div>
           <div><label><b>Vidéo de présentation</b></label><div class="upload-zone">▷<br>Glisser-déposer une vidéo ici<br><button class="btn btn-contour btn-petit">Choisir un fichier</button><small>MP4, WebM · max. 50 Mo</small></div></div>
         </div>
-        <div class="footer-action"><a class="btn btn-contour" href="/laboratoire">Annuler</a><button class="btn btn-bleu">Suivant →</button></div>
+        <div class="footer-action"><a class="btn btn-contour" href="/laboratoire">Annuler</a><button class="btn btn-bleu" onclick="sauverLaboratoire(true)">Suivant →</button></div>
       </div>
     </section>
     <aside>
@@ -54,8 +54,31 @@ const contenu = `
 
 document.getElementById('app').innerHTML = appShell('nouveau-laboratoire', contenu, '', {
   search: 'Rechercher un laboratoire, une simulation, une expérience...',
-  action: '<a class="btn btn-bleu btn-petit" href="/nouveau-laboratoire">+ Nouveau laboratoire</a>'
+  action: '<button class="btn btn-bleu btn-petit" onclick="sauverLaboratoire()">Enregistrer</button>'
 });
+
+function choisirTypeLab(el) {
+  document.querySelectorAll('[data-lab-type]').forEach(card => card.classList.remove('actif'));
+  el.classList.add('actif');
+}
+
+async function sauverLaboratoire(rediriger = false) {
+  const titre = valeurChamp('lab-titre');
+  if (!titre) return toast('Le titre du laboratoire est obligatoire.', 'erreur');
+  const type = (document.querySelector('[data-lab-type].actif') || {}).dataset?.labType || 'Expérience guidée';
+  await posterCreation('/api/laboratoires', {
+    titre,
+    discipline: valeurChamp('lab-discipline'),
+    niveau: valeurChamp('lab-niveau'),
+    sousDiscipline: valeurChamp('lab-sous-discipline'),
+    type,
+    typeLaboratoire: type,
+    description: valeurChamp('lab-description'),
+    objectifs: valeurChamp('lab-description'),
+    statut: 'brouillon',
+    visibilite: 'prive'
+  }, rediriger ? '/laboratoire' : '');
+}
 </script>
 </body>
 </html>

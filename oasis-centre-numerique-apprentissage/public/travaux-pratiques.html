@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travaux pratiques enseignants - OASIS</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/app.js"></script>
+<script>
+const tps = [
+  { icon: "⚛", titre: "Détermination de la constante de raideur d’un ressort", meta: "Durée : 60 min · Difficulté : Moyenne · Type : Expérimental", tags: ["Physique", "Secondaire 4", "Mécanique"], dates: "Créé le 15/05/2024<br>Modifié le 20/05/2024" },
+  { icon: "⚗", titre: "Synthèse et identification de l’aspirine", meta: "Durée : 90 min · Difficulté : Difficile · Type : Expérimental", tags: ["Chimie", "Secondaire 5", "Chimie organique"], dates: "Créé le 10/05/2024<br>Modifié le 18/05/2024" },
+  { icon: "◉", titre: "Observation des cellules végétales au microscope", meta: "Durée : 45 min · Difficulté : Facile · Type : Observation", tags: ["SVT", "Secondaire 2", "Biologie cellulaire"], dates: "Créé le 08/05/2024<br>Modifié le 12/05/2024" },
+  { icon: "π", titre: "Vérification de la relation de Pythagore", meta: "Durée : 50 min · Difficulté : Facile · Type : Manipulation", tags: ["Mathématiques", "Secondaire 3", "Géométrie"], dates: "Créé le 05/05/2024<br>Modifié le 09/05/2024" },
+  { icon: "⚙", titre: "Montage et test d’un circuit série", meta: "Durée : 60 min · Difficulté : Moyenne · Type : Manipulation", tags: ["Technologie", "Secondaire 3", "Électricité"], dates: "Créé le 01/05/2024<br>Modifié le 03/05/2024" }
+];
+
+function ligneTP(tp) {
+  return `<article class="object-row">
+    <span class="object-check"></span><span class="object-icon">${tp.icon}</span>
+    <div><b>${tp.titre}</b><div>${tp.tags.map(t => `<em class="pill">${t}</em>`).join(" ")}</div><p>${tp.meta}</p></div>
+    <small class="object-meta">${tp.dates}</small>
+    <div class="object-actions"><button title="Voir">⌕</button><button title="Modifier">✎</button><button title="Dupliquer">□</button><button title="Partager">⇄</button><button title="Plus">⋮</button></div>
+  </article>`;
+}
+
+const contenu = `
+  <section class="dash-hero">
+    <h1>Travaux pratiques - Enseignants</h1>
+    <p>Proposez des activités expérimentales et pratiques pour développer les compétences scientifiques et techniques de vos élèves.</p>
+    <a class="btn btn-contour" href="/apropos" style="margin-top:6px">Guide d’utilisation</a>
+  </section>
+  <div class="tabs-modern"><button class="actif">Tous les TP</button><button>Par discipline</button><button>Par niveau</button><button>Mes TP</button><button>TP partagés avec moi</button><button>Favoris</button></div>
+  <div class="category-scroll">
+    ${[["⚛","Physique","78 TP"],["⚗","Chimie","65 TP"],["◉","SVT","54 TP"],["π","Mathématiques","49 TP"],["⚙","Technologie","38 TP"],["⌘","Informatique","31 TP"],["…","Autres disciplines","26 TP"]].map(c => `<a class="mini-category" href="#"><span>${c[0]}</span><div><b>${c[1]}</b><small>${c[2]}</small></div></a>`).join("")}
+  </div>
+  <div class="filters-modern">
+    <select><option>Niveau scolaire : Tous</option></select><select><option>Discipline : Toutes</option></select><select><option>Durée : Toutes</option></select><select><option>Type de TP : Tous</option></select><input placeholder="Rechercher dans mes TP..."><button class="btn btn-contour">Filtres</button>
+  </div>
+  <div class="section-head"><h2>341 travaux pratiques trouvés</h2><a href="#">Trier par : Plus récents</a></div>
+  <div class="object-list">${tps.map(ligneTP).join("")}</div>
+  <div class="pagination"><button>‹</button><button class="actif">1</button><button>2</button><button>3</button><span>…</span><button>18</button><button>›</button></div>
+`;
+
+const droite = `
+  <div class="side-card"><h3>Actions rapides</h3>
+    ${quickAction("+", "Créer un nouveau TP", "Concevez un TP pas à pas", "#")}
+    ${quickAction("⇧", "Importer un TP", "Importer depuis Word, PDF ou fichier", "#")}
+    ${quickAction("□", "Dupliquer un TP existant", "Gagner du temps avec un modèle", "#")}
+    ${quickAction("⇄", "Partager une collection", "Partager plusieurs TP à la fois", "#")}
+  </div>
+  <div class="side-card"><h3>Mes collections <a href="#">Voir tout</a></h3>
+    ${featuredList([{titre:"Mécanique", meta:"12 TP"},{titre:"Optique", meta:"8 TP"},{titre:"Chimie organique", meta:"9 TP"},{titre:"Biologie cellulaire", meta:"7 TP"},{titre:"Électricité", meta:"10 TP"}])}
+  </div>
+  <div class="side-card"><h3>Statistiques <a href="#">Voir le rapport</a></h3><div class="stat-line"><span><b>341</b><small>TP créés</small></span><span><b>126</b><small>Partagés</small></span><span><b>2 145</b><small>Utilisations</small></span><span><b>94%</b><small>Engagement</small></span></div><div class="bar-chart"><span style="height:62%"></span><span style="height:78%"></span><span style="height:48%"></span><span style="height:65%"></span><span style="height:58%"></span><span style="height:72%"></span></div></div>
+  <div class="side-card orange-callout"><h3>Conseil pédagogique</h3><p>Variez les types de TP pour développer l’observation, l’analyse et la résolution de problèmes.</p></div>
+`;
+
+document.getElementById("app").innerHTML = appShell("tp", contenu, droite, {
+  search: "Rechercher un TP, une matière, un thème...",
+  action: '<a class="btn btn-bleu btn-petit" href="#">+ Créer un travail pratique</a>'
+});
+</script>
+</body>
+</html>
