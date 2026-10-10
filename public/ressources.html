@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bibliothèque numérique - OASIS</title>
+<title>Ressources pédagogiques - OASIS</title>
 <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -15,7 +15,7 @@ const categorie = param('categorie');
 
 const contenu = `
   <section class="dash-hero">
-    <h1>Bibliothèque numérique</h1>
+    <h1>Ressources pédagogiques</h1>
     <p>Explorez les livres, vidéos, fiches, guides, documents et ressources pour enseignants regroupés dans l'espace OASIS.</p>
     <div class="hero-chips">
       <span>Livres numériques</span><span>Vidéos pédagogiques</span><span>Fiches et guides</span><span>Ressources apprenants</span><span>Ressources enseignants</span>
@@ -26,7 +26,7 @@ const contenu = `
     <select id="filtre-type"><option value="">Type : Tous</option><option value="support">Cours</option><option value="document">Documents</option><option value="fiche">Fiches</option><option value="video">Vidéos</option><option value="podcast">Audios</option></select>
     <select id="filtre-niveau"><option value="">Niveau : Tous</option><option>Primaire</option><option>Collège</option><option>Lycée</option></select>
     <select id="filtre-tri"><option value="recentes">Trier par : récentes</option><option value="populaires">Trier par : populaires</option><option value="notees">Trier par : mieux notées</option></select>
-    <input id="filtre-q" value="${q || ''}" placeholder="Rechercher dans la bibliothèque...">
+    <input id="filtre-q" value="${q || ''}" placeholder="Rechercher dans les ressources pédagogiques...">
     <button class="btn btn-contour" onclick="charger(1)">Filtres</button>
   </div>
   <div class="section-head">

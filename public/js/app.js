@@ -1,4 +1,4 @@
-/* OASIS Centre numérique d'apprentissage - script partagé */
+/* OASIS Banque de ressources pédagogiques - script partagé */
 
 const API = {
   async req(method, url, body) {
@@ -55,7 +55,7 @@ const ROLES_ENSEIGNANT = ['enseignant', 'admin'];
 
 const LIENS_NAV = [
   ['/', 'Accueil', ROLES_TOUS],
-  ['/ressources', 'Bibliothèque numérique', ROLES_TOUS],
+  ['/ressources', 'Ressources pédagogiques', ROLES_TOUS],
   ['/ressources-pedagogiques-eleves', 'Espace élèves', ROLES_ELEVE],
   ['/ressources-pedagogiques-enseignant', 'Espace enseignants', ROLES_ENSEIGNANT],
   ['/quiz', 'Quiz', ROLES_ELEVE],
@@ -76,7 +76,7 @@ const MENU_OASIS = [
   {
     titre: 'Ressources',
     liens: [
-      ['bibliotheque', '/ressources', '▥', 'Bibliothèque numérique', ROLES_TOUS],
+      ['bibliotheque', '/ressources', '▥', 'Ressources pédagogiques', ROLES_TOUS],
       ['eleves', '/ressources-pedagogiques-eleves', '▥', 'Ressources pour élèves', ROLES_ELEVE],
       ['catalogue', '/catalogue', '▦', 'Catalogue apprenant', ROLES_ELEVE],
       ['multimedia-eleve', '/multimedia', '▷', 'Vidéos éducatives', ROLES_ELEVE],
@@ -222,8 +222,8 @@ function afficherEntete(actif = '') {
   document.body.insertAdjacentHTML('afterbegin', `
   <header class="entete"><div class="conteneur entete-int">
     <a href="/" class="logo">${LOGO_HTML}
-      <div class="logo-texte"><b><span class="l1">OASIS</span><br><span class="l2">Centre numérique</span></b>
-      <div class="logo-slogan">Apprendre, enseigner et réussir</div></div>
+      <div class="logo-texte"><b><span class="l1">OASIS</span><br><span class="l2">Banque de ressources</span></b>
+      <div class="logo-slogan">Ressources pédagogiques</div></div>
     </a>
     <nav class="nav" aria-label="Navigation principale">${nav}</nav>
     <div class="entete-actions">
@@ -240,13 +240,13 @@ function afficherPied() {
     <div class="pied-int">
       <div>
         <div class="logo logo-footer">${LOGO_HTML}
-          <div class="logo-texte"><b>OASIS<br>Centre numérique</b>
+          <div class="logo-texte"><b>OASIS<br>Banque de ressources</b>
           <div class="logo-slogan">Un accès illimité au savoir pour bâtir votre avenir</div></div>
         </div>
-        <p style="font-size:13px;margin-top:12px">OASIS Centre numérique d'apprentissage regroupe des livres, vidéos, guides, ressources apprenants et ressources enseignants.</p>
+        <p style="font-size:13px;margin-top:12px">OASIS Banque de ressources pédagogiques regroupe des livres, vidéos, guides, ressources apprenants et ressources enseignants.</p>
       </div>
       <div><h4>Explorer</h4>
-        <a href="/ressources">Bibliothèque numérique</a><a href="/catalogue?type=video">Vidéos pédagogiques</a>
+        <a href="/ressources">Ressources pédagogiques</a><a href="/catalogue?type=video">Vidéos pédagogiques</a>
         <a href="/ressources-methodologiques-enseignant">Méthodologie</a><a href="/ressources-pedagogiques-enseignant">Pédagogie</a>
       </div>
       <div><h4>Communauté</h4>
@@ -266,7 +266,7 @@ function afficherPied() {
       </div>
     </div>
     <div class="pied-bas">
-      <span>© ${new Date().getFullYear()} OASIS Centre numérique d'apprentissage.</span>
+      <span>© ${new Date().getFullYear()} OASIS Banque de ressources pédagogiques.</span>
       <span>Ressources et outils pour apprendre, enseigner et réussir.</span>
     </div>
   </div></footer>`);
@@ -279,7 +279,7 @@ function sidebarOasis(actif = '') {
     liens: g.liens.filter(([, , , , roles]) => lienAutorise(roles, role))
   })).filter(g => g.liens.length);
   return `<aside class="oasis-sidebar">
-    <a href="/" class="side-brand">${LOGO_HTML}<span><b>OASIS</b><small>Centre numérique<br>d'apprentissage</small></span></a>
+    <a href="/" class="side-brand">${LOGO_HTML}<span><b>OASIS</b><small>Banque de ressources<br>pédagogiques</small></span></a>
     <div class="role-switcher">
       <small>Espace actif</small>
       <b>${nomRole(role)}</b>
